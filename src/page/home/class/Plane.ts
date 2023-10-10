@@ -40,6 +40,7 @@ class Plane {
     public getImg()         { return this.img ; }
     public getPosition()    { return this.position ; }
 
+    // Todo : Integration with the user plane's moveEvent
     public move( direction : number ) {
         if(this.wall) {
             switch (direction) {
@@ -71,40 +72,24 @@ class Plane {
 }
 
 class UserPlane extends Plane {
-    public moveEvent() {
-        const ArrowKeys = [
-            {
-                code : '38',
-                string : 'ArrowUp',
-                movement : Direction.UP
-            },
-            {
-                code: '40',
-                string: 'ArrowDown',
-                movement : Direction.DOWN
-            },
-            {
-                code: '39',
-                string: 'ArrowRight',
-                movement : Direction.RIGHT
-            },
-            {
-                code: '37',
-                string: 'ArrowLeft',
-                movement : Direction.LEFT
-            },
-        ];
+    public moveEvent( event : KeyboardEvent ) : void {
 
-        const handler = (e: KeyboardEvent) => {
-            for (let i = 0; i < ArrowKeys.length; i++) {
-                const { code, string, movement } = ArrowKeys[i];
-                if ( e.key === string ) {
-                    this.move(movement) ;
-                }
-            }
-        };
-        
-        return (e: KeyboardEvent) => handler(e);
+        switch(event.key) {
+            case('ArrowUp') : 
+                this.move(Direction.UP) ;
+                break ;
+            case('ArrowDown') : 
+                this.move(Direction.DOWN) ;
+                break ;
+            case('ArrowRight') :
+                this.move(Direction.RIGHT) ;
+                break ;
+            case('ArrowLeft') :
+                this.move(Direction.LEFT) ;
+                break ;
+            default : 
+                break ;
+        }
     }
 }
   

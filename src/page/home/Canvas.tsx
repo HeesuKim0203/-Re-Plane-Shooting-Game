@@ -17,17 +17,15 @@ const Canvas = ( props : CanvasProps ) => {
     const width = props.width as number ;
     const height = props.height as number ;
 
-    const paint = new Painter(canvas, backgroundSrc) ;
     const wall = new Wall(0, 0, width, height) ;
+    const userPlane = new UserPlane(0, 100, userPlaneSrc, 0, 0, wall) ;
 
-    const user = new UserPlane(0, 100, userPlaneSrc, 0, 0, wall) ;
+    const paint = new Painter(canvas, backgroundSrc, userPlane) ;
+
+    document.addEventListener('keydown', (event) => userPlane.moveEvent(event));
 
     paint.initBackground() ;
-    paint.registerPlane(user) ;
-
     paint.runAnimationFrame() ;
-
-    document.addEventListener('keydown', user.moveEvent());
 
   }) ; 
 

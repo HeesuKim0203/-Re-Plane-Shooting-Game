@@ -4,12 +4,16 @@ import Background from './Wall'
 class Painter {
     private canvas : HTMLCanvasElement ;
     private ctx : CanvasRenderingContext2D | null = null ;
+
     private backgroundSrc : string = "" ;
+
+    private UserPlane : Plane | null = null ;
     private planes : Plane[] = [] ;
 
-    constructor( canvas : HTMLCanvasElement, backgroundSrc : string ) {
+    constructor( canvas : HTMLCanvasElement, backgroundSrc : string, UserPlane : Plane ) {
         this.canvas = canvas ; 
         this.ctx = this.canvas.getContext('2d') ;
+        this.UserPlane = UserPlane ;
         this.backgroundSrc = backgroundSrc ;
     }
 
@@ -51,8 +55,13 @@ class Painter {
         }) ;
     }
 
+    private userMove() {
+        // Todo : User Move True And False
+    }
+
     public runAnimationFrame() {
         this.getDrawData();
+        this.userMove() ;
         requestAnimationFrame(this.runAnimationFrame.bind(this)) ;
     }
 }
