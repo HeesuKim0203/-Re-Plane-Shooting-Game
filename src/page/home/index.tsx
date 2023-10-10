@@ -1,6 +1,6 @@
 import React from 'react' ;
 
-import Canvas from './Canvas';
+import Canvas from './Canvas'
 
 function Home() {
     return (
@@ -8,8 +8,8 @@ function Home() {
             <h1 className = 'mt-12 font-pixel font-semibold text-5xl'>Plane Shooting Game</h1>
             <div className = 'mt-14'>
                 <Canvas 
-                    width = { 1000 }
-                    height = { 500 }
+                    width = { 1200 }
+                    height = { 600 }
                 />
             </div>
         </div>
