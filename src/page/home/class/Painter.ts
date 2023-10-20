@@ -7,13 +7,13 @@ class Painter {
 
     private backgroundSrc : string = "" ;
 
-    private UserPlane : Plane | null = null ;
+    private userPlane : Plane | null = null ;
     private planes : Plane[] = [] ;
 
-    constructor( canvas : HTMLCanvasElement, backgroundSrc : string, UserPlane : Plane ) {
+    constructor( canvas : HTMLCanvasElement, backgroundSrc : string, userPlane : Plane ) {
         this.canvas = canvas ; 
         this.ctx = this.canvas.getContext('2d') ;
-        this.UserPlane = UserPlane ;
+        this.userPlane = userPlane ;
         this.backgroundSrc = backgroundSrc ;
     }
 
@@ -43,6 +43,20 @@ class Painter {
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+        // Draw User Planes
+        if( this.userPlane ) {
+            const userImage = this.userPlane.getImg() ;
+
+            if( !userImage ) return ;
+            
+            this.userPlane.move() ;
+
+            const { x, y } = this.userPlane.getPosition() ;
+
+            this.ctx?.drawImage(userImage, x, y, userImage.width, userImage.height) ;
+        }
+
+        // Draw Planes
         this.planes.forEach((plane : Plane) => {
 
             const image = plane.getImg() ;            
@@ -55,13 +69,8 @@ class Painter {
         }) ;
     }
 
-    private userMove() {
-        // Todo : User Move True And False
-    }
-
     public runAnimationFrame() {
         this.getDrawData();
-        this.userMove() ;
         requestAnimationFrame(this.runAnimationFrame.bind(this)) ;
     }
 }

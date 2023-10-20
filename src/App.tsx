@@ -10,7 +10,7 @@ import logo from './logo.svg' ;
 
 function App() {
   return (
-    <div className = "bg-zinc-200">
+    <div>
       <BrowserRouter>
         <Routes>
           <Route path = { HOME } element = { <Home/> } />

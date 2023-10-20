@@ -14,15 +14,20 @@ const Canvas = ( props : CanvasProps ) => {
   
   const canvasRef = useCanvas((canvas) => {
 
+    const MOVE = 4 ;
     const width = props.width as number ;
     const height = props.height as number ;
 
     const wall = new Wall(0, 0, width, height) ;
-    const userPlane = new UserPlane(0, 100, userPlaneSrc, 0, 0, wall) ;
+    const userPlane = new UserPlane(0, 100, userPlaneSrc, 0, 0, wall, MOVE) ;
 
     const paint = new Painter(canvas, backgroundSrc, userPlane) ;
 
-    document.addEventListener('keydown', (event) => userPlane.moveEvent(event));
+    document.addEventListener('keydown', (event) => userPlane.keyDownToMoveMapping(event));
+    document.addEventListener('keyup', (event) => userPlane.keyUpToMoveMapping(event));
+    setInterval(() => {
+
+    }, 500) ;
 
     paint.initBackground() ;
     paint.runAnimationFrame() ;
