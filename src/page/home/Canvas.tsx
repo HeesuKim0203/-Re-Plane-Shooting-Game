@@ -1,8 +1,8 @@
 import { useRef, useEffect, useState } from 'react' 
 import type { CanvasHTMLAttributes, KeyboardEvent } from 'react' 
 
-import backgroundSrc from './img/background.png'
-import userPlaneSrc from './img/user_airplane.png'
+import backgroundSrc from './img/background/background.png'
+import userPlaneSrc from './img/planes/user_airplane.png'
 import useCanvas from './useCanvas'
 import Painter from './class/Painter'
 import Wall from './class/Wall'
@@ -14,12 +14,12 @@ const Canvas = ( props : CanvasProps ) => {
   
   const canvasRef = useCanvas((canvas) => {
 
-    const MOVE = 4 ;
+    const SPEED = 4 ;
     const width = props.width as number ;
     const height = props.height as number ;
 
     const wall = new Wall(0, 0, width, height) ;
-    const userPlane = new UserPlane(0, 100, userPlaneSrc, 0, 0, wall, MOVE) ;
+    const userPlane = new UserPlane(0, 100, userPlaneSrc, 0, 0, wall, SPEED) ;
 
     const paint = new Painter(canvas, backgroundSrc, userPlane) ;
 

@@ -1,5 +1,4 @@
 import { Plane } from './Plane'
-import Background from './Wall'
 
 class Painter {
     private canvas : HTMLCanvasElement ;
@@ -67,6 +66,10 @@ class Painter {
             this.ctx?.drawImage(image, x, y, image.width, image.height) ;
 
         }) ;
+    }
+
+    private getDrawShoot() {
+
     }
 
     public runAnimationFrame() {
