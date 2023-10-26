@@ -20,10 +20,10 @@ export enum Direction {
 }
 
 export class Obj {
-    private wall : Wall | null = null ;
-    private direction : Move = { down : false, up : false, left : false, right : false } ;
-    private position : Position = { x : 0, y : 0 } ;
-    private speed : number = 0 ;
+    wall : Wall | null = null ;
+    direction : Move = { down : false, up : false, left : false, right : false } ;
+    position : Position = { x : 0, y : 0 } ;
+    speed : number = 0 ;
 
     constructor( positionX : number, positionY : number, wall : Wall, speed : number ) {
         this.position.x = positionX ;
@@ -32,9 +32,6 @@ export class Obj {
         this.wall = wall ;
         this.speed = speed ;
     }
-
-    public getPosition()    { return this.position ; }
-    public getDirection()   { return this.direction ; }
 
     public move() {
         try {

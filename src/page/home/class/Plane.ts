@@ -5,10 +5,10 @@ import { Obj, Direction } from './util'
 class Plane extends Obj {
     private id : number = 0 ;
     private img : HTMLImageElement | null = null ;
+
+    private shootImgList : HTMLImageElement[] | null = null ;
     
-    private shoots : Shoot[] = [] ;
-    
-    constructor( id : number, size : number, imgSrc : string, positionX : number, positionY : number, wall : Wall, speed : number ) {
+    constructor( id : number, size : number, imgSrc : string, positionX : number, positionY : number, wall : Wall, speed : number, shootImgSrcList : string[] ) {
         
         super( positionX, positionY, wall, speed ) ;
 
@@ -18,6 +18,14 @@ class Plane extends Obj {
         this.img.src = imgSrc ;
         this.img.width = size ;
         this.img.height = size ;
+
+        this.shootImgList = shootImgSrcList.map(( src : string ) => {
+            const img = new Image() ;
+            img.width = size ;
+            img.height = size ;
+            img.src = src ;
+            return img ;
+        }) ;
     }
 
     public getId()          { return this.id ; } 
@@ -34,16 +42,16 @@ class UserPlane extends Plane {
 
         switch(event.key) {
             case('ArrowUp') : 
-                this.getDirection().up = true ;
+                this.direction.up = true ;
                 break ;
             case('ArrowDown') : 
-                this.getDirection().down = true ;
+                this.direction.down = true ;
                 break ;
             case('ArrowRight') :
-                this.getDirection().right = true ;
+                this.direction.right = true ;
                 break ;
             case('ArrowLeft') :
-                this.getDirection().left = true ;
+                this.direction.left = true ;
                 break ;
             case(' ') :
                 console.log(typeof event.key) ;
@@ -57,16 +65,16 @@ class UserPlane extends Plane {
         
         switch(event.key) {
             case('ArrowUp') : 
-                this.getDirection().up = false ;
+                this.direction.up = false ;
                 break ;
             case('ArrowDown') : 
-                this.getDirection().down = false ;
+                this.direction.down = false ;
                 break ;
             case('ArrowRight') :
-                this.getDirection().right = false ;
+                this.direction.right = false ;
                 break ;
             case('ArrowLeft') :
-                this.getDirection().left = false ;
+                this.direction.left = false ;
                 break ;
             case(' ') :
                 console.log(typeof event.key) ;
