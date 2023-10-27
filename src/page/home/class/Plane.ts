@@ -5,6 +5,7 @@ import { Obj, Direction } from './util'
 class Plane extends Obj {
     private id : number = 0 ;
     private img : HTMLImageElement | null = null ;
+    shootAction : boolean = false ;
 
     private shootImgList : HTMLImageElement[] | null = null ;
     
@@ -30,10 +31,6 @@ class Plane extends Obj {
 
     public getId()          { return this.id ; } 
     public getImg()         { return this.img ; }
-
-    public registerShoot() {
-        
-    }
 }
 
 class UserPlane extends Plane {
@@ -54,7 +51,7 @@ class UserPlane extends Plane {
                 this.direction.left = true ;
                 break ;
             case(' ') :
-                console.log(typeof event.key) ;
+                this.shootAction = true ;
                 break ;
             default : 
                 break ;
@@ -77,7 +74,7 @@ class UserPlane extends Plane {
                 this.direction.left = false ;
                 break ;
             case(' ') :
-                console.log(typeof event.key) ;
+                this.shootAction = false ;
                 break ;
             default : 
                 break ;

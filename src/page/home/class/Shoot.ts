@@ -19,15 +19,22 @@ export class Shoot extends Obj {
         wall : Wall, 
         speed : number, 
         normalImageIndex : number,
-        collisionImageIndex : number, 
-        imgList : HTMLImageElement[] 
+        collisionImageIndex : number,
+        direction : boolean, 
+        imgList : HTMLImageElement[]
     ) {
-        super( positionX, positionY, wall, speed ) ;
+        super( positionX, positionY, wall, 10 ) ;
 
         this.normalImageIndex = normalImageIndex ;
         this.collisionImageIndex = collisionImageIndex ;
 
         this.imgList = imgList ;
+
+        if( direction ) {
+            this.direction.right = true ;
+        }else {
+            this.direction.left = true ;
+        }
     }
 
     public getCurrentIndex()                        { return this.currentIndex ; }
@@ -37,7 +44,7 @@ export class Shoot extends Obj {
 
     public setCurrentIndex( currentIndex : number ) { this.currentIndex = currentIndex ; }
     
-    public setStateTOCollison() { this.state = State.COLLISION ; }
+    public setStateToCollison() { this.state = State.COLLISION ; }
 
     public move() {
         try {
@@ -97,11 +104,31 @@ export class ShootList {
         return this.instance ;
     }
 
-    public shootRegister( shoot : Shoot ) {
+    public createShoot( 
+        positionX : number, 
+        positionY : number, 
+        wall : Wall, 
+        speed : number, 
+        normalImageIndex : number,
+        collisionImageIndex : number,
+        direction : boolean, 
+        imgList : HTMLImageElement[] 
+    ) {
+
+        const shoot = new Shoot(positionX,
+            positionY,
+            wall,
+            speed,
+            normalImageIndex,
+            collisionImageIndex,
+            direction,
+            imgList
+        ) ;
+ 
         this.shootList = this.shootList.concat(shoot) ;
     }
 
-    public shootUnRegister() {
+    public deleteShoot() {
         const newShootList = this.shootList.filter(( shoot : Shoot ) => shoot.getState() !== this.getCollisonShootState()) ;
         if( newShootList ) this.shootList = newShootList ;
     }

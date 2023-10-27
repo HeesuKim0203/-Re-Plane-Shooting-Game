@@ -1,4 +1,5 @@
 import { Plane } from './Plane'
+import { ShootList } from './Shoot';
 
 class Painter {
     private canvas : HTMLCanvasElement ;
@@ -8,6 +9,7 @@ class Painter {
 
     private userPlane : Plane | null = null ;
     private planes : Plane[] = [] ;
+    private shootList : ShootList = new ShootList() ;
 
     constructor( canvas : HTMLCanvasElement, backgroundSrc : string, userPlane : Plane ) {
         this.canvas = canvas ; 
@@ -36,7 +38,7 @@ class Painter {
         ] ;
     }
 
-    private getDrawData() {
+    private draw() {
 
         if( !this.ctx ) return ;
 
@@ -44,36 +46,29 @@ class Painter {
 
         // Draw User Planes
         if( this.userPlane ) {
-            const userImage = this.userPlane.getImg() ;
-
-            if( !userImage ) return ;
-            
             this.userPlane.move() ;
+            
+            if( this.userPlane.shootAction ) 
 
-            const { x, y } = this.userPlane.getPosition() ;
-
-            this.ctx?.drawImage(userImage, x, y, userImage.width, userImage.height) ;
+            this.drawPlane(this.userPlane) ;
         }
 
         // Draw Planes
-        this.planes.forEach((plane : Plane) => {
-
-            const image = plane.getImg() ;            
-            if( !image ) return ;
-
-            const { x, y } = plane.getPosition() ;
-
-            this.ctx?.drawImage(image, x, y, image.width, image.height) ;
-
-        }) ;
+        this.planes.forEach((plane : Plane) => this.drawPlane(plane)) ;
     }
 
-    private getDrawShoot() {
+    private drawPlane( plane : Plane ) {
+        const image = plane.getImg() ; 
 
+        if( !image ) return ;
+
+        const { x, y } = plane.position ;
+
+        this.ctx?.drawImage(image, x, y, image.width, image.height) ;
     }
 
     public runAnimationFrame() {
-        this.getDrawData();
+        this.draw();
         requestAnimationFrame(this.runAnimationFrame.bind(this)) ;
     }
 }
