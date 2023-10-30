@@ -48,7 +48,23 @@ class Painter {
         if( this.userPlane ) {
             this.userPlane.move() ;
             
-            if( this.userPlane.shootAction ) 
+            if( this.userPlane.shootAction && this.userPlane.wall ) {
+
+                const shootImgList = this.userPlane.getImgList() ;
+
+                if( shootImgList ) {
+                    this.shootList.createShoot(
+                        this.userPlane.position.x,
+                        this.userPlane.position.y,
+                        this.userPlane.wall,
+                        10,
+                        3,
+                        4,
+                        true,
+                        shootImgList
+                    ) ;
+                }
+            }
 
             this.drawPlane(this.userPlane) ;
         }

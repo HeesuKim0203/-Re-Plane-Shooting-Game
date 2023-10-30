@@ -23,7 +23,7 @@ export class Shoot extends Obj {
         direction : boolean, 
         imgList : HTMLImageElement[]
     ) {
-        super( positionX, positionY, wall, 10 ) ;
+        super( positionX, positionY, wall, speed ) ;
 
         this.normalImageIndex = normalImageIndex ;
         this.collisionImageIndex = collisionImageIndex ;
@@ -43,26 +43,11 @@ export class Shoot extends Obj {
     public getState()                               { return this.state ; }
 
     public setCurrentIndex( currentIndex : number ) { this.currentIndex = currentIndex ; }
-    
     public setStateToCollison() { this.state = State.COLLISION ; }
 
     public move() {
         try {
             if( this.wall ) {
-                if( this.direction.up ) {
-                    if ( this.wall?.getTop() < this.position.y - this.speed ) {
-                        this.position.y -= this.speed ;
-                    }else {
-                        this.state = State.COLLISION ;
-                    }
-                }
-                if( this.direction.down ) {
-                    if ( this.wall?.getBottom() > this.position.y + this.speed ) {
-                        this.position.y += this.speed ;
-                    }else {
-                        this.state = State.COLLISION ;
-                    }
-                }
                 if( this.direction.left ) {
                     if ( this.wall?.getLeft() < this.position.x - this.speed ) {
                         this.position.x -= this.speed ;
@@ -115,7 +100,8 @@ export class ShootList {
         imgList : HTMLImageElement[] 
     ) {
 
-        const shoot = new Shoot(positionX,
+        const shoot = new Shoot(
+            positionX,
             positionY,
             wall,
             speed,
@@ -131,5 +117,12 @@ export class ShootList {
     public deleteShoot() {
         const newShootList = this.shootList.filter(( shoot : Shoot ) => shoot.getState() !== this.getCollisonShootState()) ;
         if( newShootList ) this.shootList = newShootList ;
+    }
+
+    public shootMove() {
+        this.shootList.forEach((shoot : Shoot) => {
+            shoot.move() ;
+            shoot.setCurrentIndex(shoot.getCurrentIndex() + 1) ;
+        }) ;
     }
 }

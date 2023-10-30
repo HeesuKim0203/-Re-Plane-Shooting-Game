@@ -31,6 +31,7 @@ class Plane extends Obj {
 
     public getId()          { return this.id ; } 
     public getImg()         { return this.img ; }
+    public getImgList()     { return this.shootImgList ; }
 }
 
 class UserPlane extends Plane {
