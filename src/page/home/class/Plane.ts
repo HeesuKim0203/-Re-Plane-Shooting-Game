@@ -1,107 +1,73 @@
 import Wall from './Wall'
-
-interface Position {
-    x: number;
-    y: number;
-}
-
-interface Move {
-    down : boolean 
-    up : boolean
-    left : boolean
-    right : boolean
-}
+import { Shot } from './Shot'
+import { Obj, Direction } from './util'
   
-enum Direction {
-    DOWN = 0,
-    UP = 1,
-    LEFT = 2,
-    RIGHT = 3,
+enum ShotStatus {
+    LOAD = 0,
+    ACTION = 1,
+    STOP = 2
 }
-  
-class Plane {
-    private MOVE : number = 0 ;
+
+class Plane extends Obj {
     private id : number = 0 ;
-    private position : Position = { x : 0, y : 0 } ;
-    private direction : Move = { down : false, up : false, left : false, right : false } ;
     private img : HTMLImageElement | null = null ;
-    private wall : Wall | null = null ;
+    shotAction : ShotStatus = ShotStatus.STOP ;
 
-    constructor( id : number, size : number, imgSrc : string, positionX : number, positionY : number, wall : Wall, MOVE : number ) {
+    private shootImgList : HTMLImageElement[] | null = null ;
+    
+    constructor( id : number, size : number, imgSrc : string, positionX : number, positionY : number, wall : Wall, speed : number, shootImgSrcList : string[] ) {
         
-        this.id = id ;
-        this.wall = wall ;
+        super( positionX, positionY, wall, speed ) ;
 
-        this.position.x = positionX ;
-        this.position.y = positionY ;
+        this.id = id ;
 
         this.img = new Image() ;
         this.img.src = imgSrc ;
         this.img.width = size ;
         this.img.height = size ;
-        this.MOVE = MOVE ;
 
+        this.shootImgList = shootImgSrcList.map(( src : string ) => {
+            const img = new Image() ;
+            img.width = size ;
+            img.height = size ;
+            img.src = src ;
+            return img ;
+        }) ;
     }
 
     public getId()          { return this.id ; } 
     public getImg()         { return this.img ; }
-    public getPosition()    { return this.position ; }
-    public getDirection()   { return this.direction ; }
-
-    // Todo : Integration with the user plane's moveEvent
-    public move() {
-        try {
-            if(this.wall) {
-                if( this.direction.up ) {
-                    if ( this.wall?.getTop() < this.position.y - this.MOVE ) {
-                        this.position.y -= this.MOVE ;
-                    }
-                }
-
-                if( this.direction.down ) {
-                    if ( this.wall?.getBottom() > this.position.y + this.MOVE ) {
-                        this.position.y += this.MOVE ;
-                    }
-                }
-
-                if( this.direction.left ) {
-                    if ( this.wall?.getLeft() < this.position.x - this.MOVE ) {
-                        this.position.x -= this.MOVE ;
-                    }
-                }
-
-                if(this.direction.right) {
-                    if ( this.wall?.getRight() > this.position.x + this.MOVE ) {
-                        this.position.x += this.MOVE ;
-                    }
-                }
-            }else {
-                throw new Error("Not Found wall") ;
-            }
-        } catch (error) {
-            
-            console.log(error) ;
-
-        }
+    public getImgList()     { return this.shootImgList ; }
+    public oneShot() {
+        this.shotAction =  ShotStatus.LOAD; 
     }
 }
 
 class UserPlane extends Plane {
 
     public keyDownToMoveMapping( event : KeyboardEvent ) : void {
-        
+
+        event.preventDefault() ;
+
         switch(event.key) {
             case('ArrowUp') : 
-                this.getDirection().up = true ;
+                this.direction.up = true ;
                 break ;
             case('ArrowDown') : 
-                this.getDirection().down = true ;
+                this.direction.down = true ;
                 break ;
             case('ArrowRight') :
-                this.getDirection().right = true ;
+                this.direction.right = true ;
                 break ;
             case('ArrowLeft') :
-                this.getDirection().left = true ;
+                this.direction.left = true ;
+                break ;
+            case(' ') :
+                
+                if( this.shotAction == ShotStatus.LOAD ) break ;
+
+                this.shotAction = ShotStatus.ACTION ;
+                
                 break ;
             default : 
                 break ;
@@ -110,18 +76,23 @@ class UserPlane extends Plane {
 
     public keyUpToMoveMapping( event : KeyboardEvent ) : void {
         
+        event.preventDefault() ;
+
         switch(event.key) {
             case('ArrowUp') : 
-                this.getDirection().up = false ;
+                this.direction.up = false ;
                 break ;
             case('ArrowDown') : 
-                this.getDirection().down = false ;
+                this.direction.down = false ;
                 break ;
             case('ArrowRight') :
-                this.getDirection().right = false ;
+                this.direction.right = false ;
                 break ;
             case('ArrowLeft') :
-                this.getDirection().left = false ;
+                this.direction.left = false ;
+                break ;
+            case(' ') :
+                this.shotAction = ShotStatus.STOP ;
                 break ;
             default : 
                 break ;

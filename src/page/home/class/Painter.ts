@@ -1,5 +1,5 @@
 import { Plane } from './Plane'
-import Background from './Wall'
+import { Shot, ShotList } from './Shot';
 
 class Painter {
     private canvas : HTMLCanvasElement ;
@@ -9,6 +9,7 @@ class Painter {
 
     private userPlane : Plane | null = null ;
     private planes : Plane[] = [] ;
+    private shotList : ShotList = new ShotList() ;
 
     constructor( canvas : HTMLCanvasElement, backgroundSrc : string, userPlane : Plane ) {
         this.canvas = canvas ; 
@@ -37,7 +38,7 @@ class Painter {
         ] ;
     }
 
-    private getDrawData() {
+    private draw() {
 
         if( !this.ctx ) return ;
 
@@ -45,32 +46,60 @@ class Painter {
 
         // Draw User Planes
         if( this.userPlane ) {
-            const userImage = this.userPlane.getImg() ;
-
-            if( !userImage ) return ;
-            
             this.userPlane.move() ;
+            
+            if( this.userPlane.shotAction && this.userPlane.wall ) {
 
-            const { x, y } = this.userPlane.getPosition() ;
+                const shotImgList = this.userPlane.getImgList() ;
 
-            this.ctx?.drawImage(userImage, x, y, userImage.width, userImage.height) ;
+                if( shotImgList ) {
+                    this.shotList.createShot(
+                        this.userPlane.position.x + 100,
+                        this.userPlane.position.y,
+                        this.userPlane.wall,
+                        10,
+                        2,
+                        5,
+                        true,
+                        shotImgList
+                    ) ;
+                }
+            }
+
+            this.userPlane.oneShot() ;
+
+            this.drawPlane(this.userPlane) ;
         }
 
         // Draw Planes
-        this.planes.forEach((plane : Plane) => {
+        this.planes.forEach((plane : Plane) => this.drawPlane(plane)) ;
+        this.shotList.getShots().map((shot : Shot) => {
 
-            const image = plane.getImg() ;            
-            if( !image ) return ;
+            const imgList = shot.getImgList() ;
 
-            const { x, y } = plane.getPosition() ;
-
-            this.ctx?.drawImage(image, x, y, image.width, image.height) ;
-
+            if( imgList ) {
+                const image  = imgList[shot.getCurrentIndex()] ;
+                const { x, y } = shot.position ;
+                this.ctx?.drawImage(imgList[shot.getCurrentIndex()], x, y, image.width, image.height) ;
+            }
         }) ;
+
+        this.shotList.ShotMove() ;
+        this.shotList.deleteShot() ;
+    }
+
+    private drawPlane( plane : Plane ) {
+        const image = plane.getImg() ; 
+
+        if( !image ) return ;
+
+        const { x, y } = plane.position ;
+
+        this.ctx?.drawImage(image, x, y, image.width, image.height) ;
     }
 
     public runAnimationFrame() {
-        this.getDrawData();
+        this.draw();
         requestAnimationFrame(this.runAnimationFrame.bind(this)) ;
     }
 }
