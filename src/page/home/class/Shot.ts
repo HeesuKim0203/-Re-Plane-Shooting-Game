@@ -6,7 +6,7 @@ enum State {
     COLLISION = 1
 }
 
-export class Shoot extends Obj {
+export class Shot extends Obj {
     private imgList : HTMLImageElement[] | null = null ;
     private state : State = 0 ;
     private currentIndex : number = 0 ;
@@ -41,8 +41,15 @@ export class Shoot extends Obj {
     public getNormalImageIndex()                    { return this.normalImageIndex ; }
     public getCollisionImageIndex()                 { return this.collisionImageIndex ; }
     public getState()                               { return this.state ; }
+    public getImgList()                             { return this.imgList ; }
 
-    public setCurrentIndex( currentIndex : number ) { this.currentIndex = currentIndex ; }
+    public setCurrentIndex( currentIndex : number ) { 
+        // Todo : Image List Index Vaildation
+        if( currentIndex >= this.collisionImageIndex ) return ;
+
+        this.currentIndex = currentIndex ; 
+    }
+
     public setStateToCollison() { this.state = State.COLLISION ; }
 
     public move() {
@@ -73,15 +80,16 @@ export class Shoot extends Obj {
     }
 }
 
-export class ShootList {
-    private shootList : Shoot[] = [] ;
-    private instance : ShootList | null = null ;
+export class ShotList {
+    private ShotList : Shot[] = [] ;
+    private instance : ShotList | null = null ;
 
     constructor() {}
 
-    public getNormalShootState()    { return State.NORAML ; }
-    public getCollisonShootState()  { return State.COLLISION ; }
-
+    public getNormalShotState()    { return State.NORAML ; }
+    public getCollisonShotState()  { return State.COLLISION ; }
+    public getShots()              { return this.ShotList ; }
+    
     public getInstance() {
         if( this.instance ) return this.instance ;
 
@@ -89,7 +97,7 @@ export class ShootList {
         return this.instance ;
     }
 
-    public createShoot( 
+    public createShot( 
         positionX : number, 
         positionY : number, 
         wall : Wall, 
@@ -100,7 +108,7 @@ export class ShootList {
         imgList : HTMLImageElement[] 
     ) {
 
-        const shoot = new Shoot(
+        const shot = new Shot(
             positionX,
             positionY,
             wall,
@@ -111,18 +119,19 @@ export class ShootList {
             imgList
         ) ;
  
-        this.shootList = this.shootList.concat(shoot) ;
+        this.ShotList = this.ShotList.concat(shot) ;
     }
 
-    public deleteShoot() {
-        const newShootList = this.shootList.filter(( shoot : Shoot ) => shoot.getState() !== this.getCollisonShootState()) ;
-        if( newShootList ) this.shootList = newShootList ;
+    public deleteShot() {
+        const newShotList = this.ShotList.filter(( Shot : Shot ) => Shot.getState() !== this.getCollisonShotState()) ;
+        if( newShotList ) this.ShotList = newShotList ;
     }
 
-    public shootMove() {
-        this.shootList.forEach((shoot : Shoot) => {
-            shoot.move() ;
-            shoot.setCurrentIndex(shoot.getCurrentIndex() + 1) ;
+    public ShotMove() {
+        console.log(this.ShotList) ;
+        this.ShotList.forEach((Shot : Shot) => {
+            Shot.move() ;
+            Shot.setCurrentIndex(Shot.getCurrentIndex() + 1) ;
         }) ;
     }
 }

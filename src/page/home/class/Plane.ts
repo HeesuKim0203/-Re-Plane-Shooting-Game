@@ -1,11 +1,17 @@
 import Wall from './Wall'
-import { Shoot } from './Shoot'
+import { Shot } from './Shot'
 import { Obj, Direction } from './util'
   
+enum ShotStatus {
+    LOAD = 0,
+    ACTION = 1,
+    STOP = 2
+}
+
 class Plane extends Obj {
     private id : number = 0 ;
     private img : HTMLImageElement | null = null ;
-    shootAction : boolean = false ;
+    shotAction : ShotStatus = ShotStatus.STOP ;
 
     private shootImgList : HTMLImageElement[] | null = null ;
     
@@ -32,11 +38,16 @@ class Plane extends Obj {
     public getId()          { return this.id ; } 
     public getImg()         { return this.img ; }
     public getImgList()     { return this.shootImgList ; }
+    public oneShot() {
+        this.shotAction =  ShotStatus.LOAD; 
+    }
 }
 
 class UserPlane extends Plane {
 
     public keyDownToMoveMapping( event : KeyboardEvent ) : void {
+
+        event.preventDefault() ;
 
         switch(event.key) {
             case('ArrowUp') : 
@@ -52,7 +63,11 @@ class UserPlane extends Plane {
                 this.direction.left = true ;
                 break ;
             case(' ') :
-                this.shootAction = true ;
+                
+                if( this.shotAction == ShotStatus.LOAD ) break ;
+
+                this.shotAction = ShotStatus.ACTION ;
+                
                 break ;
             default : 
                 break ;
@@ -61,6 +76,8 @@ class UserPlane extends Plane {
 
     public keyUpToMoveMapping( event : KeyboardEvent ) : void {
         
+        event.preventDefault() ;
+
         switch(event.key) {
             case('ArrowUp') : 
                 this.direction.up = false ;
@@ -75,7 +92,7 @@ class UserPlane extends Plane {
                 this.direction.left = false ;
                 break ;
             case(' ') :
-                this.shootAction = false ;
+                this.shotAction = ShotStatus.STOP ;
                 break ;
             default : 
                 break ;
