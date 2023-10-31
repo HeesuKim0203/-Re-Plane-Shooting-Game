@@ -2,7 +2,7 @@ import Wall from './Wall'
 import { Shot } from './Shot'
 import { Obj, Direction } from './util'
   
-enum ShotStatus {
+export enum ShotStatus {
     LOAD = 0,
     ACTION = 1,
     STOP = 2
@@ -64,7 +64,7 @@ class UserPlane extends Plane {
                 break ;
             case(' ') :
                 
-                if( this.shotAction == ShotStatus.LOAD ) break ;
+                if( this.shotAction === ShotStatus.LOAD ) break ;
 
                 this.shotAction = ShotStatus.ACTION ;
                 

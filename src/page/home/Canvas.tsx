@@ -25,7 +25,7 @@ const Canvas = ( props : CanvasProps ) => {
     const height = props.height as number ;
 
     const wall = new Wall(0, 0, width, height) ;
-    const userPlane = new UserPlane(0, 100, userPlaneSrc, 0, 0, wall, SPEED, [ shoot1, shoot2, shoot3, shoot4, shoot5, ]) ;
+    const userPlane = new UserPlane(0, 100, userPlaneSrc, 0, 0, wall, SPEED, [ shoot1, shoot1, shoot2, shoot2, shoot3, shoot3, shoot4, shoot4, shoot5 ]) ;
 
     const paint = new Painter(canvas, backgroundSrc, userPlane) ;
 
