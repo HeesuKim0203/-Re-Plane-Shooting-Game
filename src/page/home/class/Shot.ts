@@ -128,7 +128,6 @@ export class ShotList {
     }
 
     public ShotMove() {
-        console.log(this.ShotList) ;
         this.ShotList.forEach((Shot : Shot) => {
             Shot.move() ;
             Shot.setCurrentIndex(Shot.getCurrentIndex() + 1) ;

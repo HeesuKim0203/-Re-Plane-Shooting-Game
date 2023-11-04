@@ -1,5 +1,6 @@
 import { Plane } from './Plane'
-import { Shot, ShotList } from './Shot';
+import { Shot, ShotList } from './Shot'
+import { ShotStatus } from './Plane'
 
 class Painter {
     private canvas : HTMLCanvasElement ;
@@ -48,7 +49,7 @@ class Painter {
         if( this.userPlane ) {
             this.userPlane.move() ;
             
-            if( this.userPlane.shotAction && this.userPlane.wall ) {
+            if( this.userPlane.shotAction === ShotStatus.ACTION && this.userPlane.wall ) {
 
                 const shotImgList = this.userPlane.getImgList() ;
 
@@ -64,9 +65,9 @@ class Painter {
                         shotImgList
                     ) ;
                 }
+            
+                this.userPlane.oneShot() ;
             }
-
-            this.userPlane.oneShot() ;
 
             this.drawPlane(this.userPlane) ;
         }
