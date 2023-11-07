@@ -3,10 +3,11 @@ import type { CanvasHTMLAttributes, KeyboardEvent } from 'react'
 
 import backgroundSrc from './img/background/background.png'
 import userPlaneSrc from './img/planes/user_airplane.png'
+import level1EnemyPlaneSrc from './img/planes/level1_enemy_planes.png'
 import useCanvas from './useCanvas'
 import Painter from './class/Painter'
 import Wall from './class/Wall'
-import { Plane, UserPlane } from './class/Plane'
+import { Level1EnemyPlane, Plane, UserPlane } from './class/Plane'
 
 import shoot1 from './img/shot/shot5_1.png'
 import shoot2 from './img/shot/shot5_2.png'
@@ -25,15 +26,14 @@ const Canvas = ( props : CanvasProps ) => {
     const height = props.height as number ;
 
     const wall = new Wall(0, 0, width, height) ;
-    const userPlane = new UserPlane(0, 100, userPlaneSrc, 0, 0, wall, SPEED, [ shoot1, shoot1, shoot2, shoot2, shoot3, shoot3, shoot4, shoot4, shoot5 ]) ;
+    const userPlane = new UserPlane(0, 100, userPlaneSrc, 0, 0, wall, SPEED, [ shoot1, shoot1, shoot2, shoot2, shoot3, shoot3, shoot4, shoot4, shoot5 ], 1000) ;
+    const enemyPlane1 = new Level1EnemyPlane(1, 100, level1EnemyPlaneSrc, 1100, 0, wall, SPEED, [ shoot1, shoot1, shoot2, shoot2, shoot3, shoot3, shoot4, shoot4, shoot5 ], 1000) ; 
 
     const paint = new Painter(canvas, backgroundSrc, userPlane) ;
+    paint.registerPlane(enemyPlane1) ;
 
     document.addEventListener('keydown', (event) => userPlane.keyDownToMoveMapping(event));
     document.addEventListener('keyup', (event) => userPlane.keyUpToMoveMapping(event));
-    setInterval(() => {
-
-    }, 500) ;
 
     paint.initBackground() ;
     paint.runAnimationFrame() ;

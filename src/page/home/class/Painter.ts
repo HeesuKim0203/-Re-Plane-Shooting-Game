@@ -48,7 +48,7 @@ class Painter {
         if( this.userPlane ) {
             this.userPlane.move() ;
             
-            if( this.userPlane.shotAction === ShotStatus.ACTION && this.userPlane.wall ) {
+            if( this.userPlane.getShotStatus() === ShotStatus.ACTION && this.userPlane.wall ) {
 
                 const shotImgList = this.userPlane.getImgList() ;
 
@@ -64,7 +64,7 @@ class Painter {
                         shotImgList
                     ) ;
                 }
-                this.userPlane.oneShot() ;
+                this.userPlane.shotLoadMapping() ;
             }
 
             this.drawPlane(this.userPlane) ;
@@ -72,6 +72,8 @@ class Painter {
 
         // Draw Planes
         this.planes.forEach((plane : Plane) => this.drawPlane(plane)) ;
+
+        // Shots Move
         this.shotList.getShots().map((shot : Shot) => {
 
             const imgList = shot.getImgList() ;
@@ -82,8 +84,7 @@ class Painter {
                 this.ctx?.drawImage(imgList[shot.getCurrentIndex()], x, y, image.width, image.height) ;
             }
         }) ;
-
-        this.shotList.ShotMove() ;
+        this.shotList.shotMove() ;
         this.shotList.deleteShot() ;
     }
 
@@ -92,6 +93,7 @@ class Painter {
 
         if( !image ) return ;
 
+        plane.move() ;
         const { x, y } = plane.position ;
 
         this.ctx?.drawImage(image, x, y, image.width, image.height) ;

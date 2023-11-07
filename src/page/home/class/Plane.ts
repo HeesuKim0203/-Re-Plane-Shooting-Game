@@ -11,11 +11,22 @@ export enum ShotStatus {
 class Plane extends Obj {
     private id : number = 0 ;
     private img : HTMLImageElement | null = null ;
-    shotAction : ShotStatus = ShotStatus.STOP ;
+    private shotAction : ShotStatus = ShotStatus.STOP ;
+    private shotDelay : number = 2000 ;
 
     private shootImgList : HTMLImageElement[] | null = null ;
     
-    constructor( id : number, size : number, imgSrc : string, positionX : number, positionY : number, wall : Wall, speed : number, shootImgSrcList : string[] ) {
+    constructor( 
+        id : number, 
+        size : number, 
+        imgSrc : string, 
+        positionX : number, 
+        positionY : number, 
+        wall : Wall, 
+        speed : number, 
+        shootImgSrcList : string[],
+        shotDelay : number|undefined,
+    ) {
         
         super( positionX, positionY, wall, speed ) ;
 
@@ -26,6 +37,8 @@ class Plane extends Obj {
         this.img.width = size ;
         this.img.height = size ;
 
+        if( shotDelay ) this.shotDelay = shotDelay ;
+
         this.shootImgList = shootImgSrcList.map(( src : string ) => {
             const img = new Image() ;
             img.width = size ;
@@ -35,11 +48,19 @@ class Plane extends Obj {
         }) ;
     }
 
-    public getId()          { return this.id ; } 
-    public getImg()         { return this.img ; }
-    public getImgList()     { return this.shootImgList ; }
-    public oneShot() {
-        this.shotAction =  ShotStatus.LOAD; 
+    public getId()             { return this.id ; } 
+    public getImg()            { return this.img ; }
+    public getImgList()        { return this.shootImgList ; }
+    public getShotStatus()     { return this.shotAction ; }
+    public shotActionMapping() {
+        if( this.shotAction === ShotStatus.LOAD ) return ;
+        this.shotAction = ShotStatus.ACTION ;
+    }
+    public shotLoadMapping() {
+        this.shotAction =  ShotStatus.LOAD ; 
+    }
+    public shotStopMapping() {
+        this.shotAction =  ShotStatus.STOP ; 
     }
 }
 
@@ -63,11 +84,7 @@ class UserPlane extends Plane {
                 this.direction.left = true ;
                 break ;
             case(' ') :
-                
-                if( this.shotAction === ShotStatus.LOAD ) break ;
-
-                this.shotAction = ShotStatus.ACTION ;
-                
+                this.shotActionMapping() ;
                 break ;
             default : 
                 break ;
@@ -92,12 +109,39 @@ class UserPlane extends Plane {
                 this.direction.left = false ;
                 break ;
             case(' ') :
-                this.shotAction = ShotStatus.STOP ;
+                this.shotStopMapping() ;
                 break ;
             default : 
                 break ;
         }
     }
 }
+
+class Level1EnemyPlane extends Plane {
+
+    constructor( 
+        id : number, 
+        size : number, 
+        imgSrc : string, 
+        positionX : number, 
+        positionY : number, 
+        wall : Wall, 
+        speed : number, 
+        shootImgSrcList : string[],
+        shotDelay : number|undefined,
+    ) {
+        super(id, size, imgSrc, positionX, positionY, wall, 3, shootImgSrcList, shotDelay) ;
+        this.movementMapping() ;
+    }
+
+    public movementMapping() {
+        this.direction.left = true ;
+    }
+
+    public shotMapping() {
+        
+    }
+
+}
   
-export { Plane, UserPlane, Direction } ;
+export { Plane, UserPlane, Direction, Level1EnemyPlane } ;
