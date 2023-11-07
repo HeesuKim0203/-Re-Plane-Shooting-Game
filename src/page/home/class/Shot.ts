@@ -127,7 +127,7 @@ export class ShotList {
         if( newShotList ) this.ShotList = newShotList ;
     }
 
-    public ShotMove() {
+    public shotMove() {
         this.ShotList.forEach((Shot : Shot) => {
             Shot.move() ;
             Shot.setCurrentIndex(Shot.getCurrentIndex() + 1) ;
