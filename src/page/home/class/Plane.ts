@@ -52,6 +52,7 @@ class Plane extends Obj {
     public getImg()            { return this.img ; }
     public getImgList()        { return this.shootImgList ; }
     public getShotStatus()     { return this.shotAction ; }
+    public getShotDelay()      { return this.shotDelay ; }
     public shotActionMapping() {
         if( this.shotAction === ShotStatus.LOAD ) return ;
         this.shotAction = ShotStatus.ACTION ;
@@ -132,6 +133,7 @@ class Level1EnemyPlane extends Plane {
     ) {
         super(id, size, imgSrc, positionX, positionY, wall, 3, shootImgSrcList, shotDelay) ;
         this.movementMapping() ;
+        this.shotMapping() ;
     }
 
     public movementMapping() {
@@ -139,7 +141,9 @@ class Level1EnemyPlane extends Plane {
     }
 
     public shotMapping() {
-        
+        setInterval(() => {
+            this.shotActionMapping() ;
+        }, this.getShotDelay()) ;
     }
 
 }

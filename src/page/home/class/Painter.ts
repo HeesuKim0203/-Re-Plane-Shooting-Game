@@ -61,7 +61,8 @@ class Painter {
                         8,
                         9,
                         true,
-                        shotImgList
+                        shotImgList,
+                        true
                     ) ;
                 }
                 this.userPlane.shotLoadMapping() ;
@@ -92,6 +93,26 @@ class Painter {
         const image = plane.getImg() ; 
 
         if( !image ) return ;
+
+        if( plane.getShotStatus() === ShotStatus.ACTION && plane.wall ) {
+
+            const shotImgList = plane.getImgList() ;
+
+            if( shotImgList ) {
+                this.shotList.createShot(
+                    plane.position.x - 60,
+                    plane.position.y,
+                    plane.wall,
+                    10,
+                    8,
+                    9,
+                    false,
+                    shotImgList,
+                    false
+                ) ;
+            }
+            plane.shotStopMapping() ;
+        }
 
         plane.move() ;
         const { x, y } = plane.position ;
