@@ -25,7 +25,7 @@ class Plane extends Obj {
         wall : Wall, 
         speed : number, 
         shootImgSrcList : string[],
-        shotDelay : number|undefined,
+        shotDelay? : number,
     ) {
         
         super( positionX, positionY, wall, speed ) ;
