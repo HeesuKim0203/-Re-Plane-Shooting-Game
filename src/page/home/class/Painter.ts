@@ -1,4 +1,4 @@
-import { Plane, ShotStatus } from './Plane'
+import { Plane } from './Plane'
 import { Shot, ShotList } from './Shot' ;
 
 class Painter {
@@ -48,24 +48,25 @@ class Painter {
         if( this.userPlane ) {
             this.userPlane.move() ;
             
-            if( this.userPlane.getShotStatus() === ShotStatus.ACTION && this.userPlane.wall ) {
+            if( this.userPlane.checkShotAction() && this.userPlane.wall ) {
 
                 const shotImgList = this.userPlane.getImgList() ;
 
+                const { shotPositionX, shotPositionY } = this.userPlane.getShotPosition(true) ;
+
                 if( shotImgList ) {
                     this.shotList.createShot(
-                        this.userPlane.position.x + 60,
-                        this.userPlane.position.y,
+                        shotPositionX, 
+                        shotPositionY,
                         this.userPlane.wall,
-                        10,
-                        8,
-                        9,
+                        this.userPlane.getShotSpeed(),
+                        this.userPlane.getShotListNormalImageIndex(),
+                        this.userPlane.getShotCollisionImageIndex(),
                         true,
-                        shotImgList,
-                        true
+                        shotImgList
                     ) ;
                 }
-                this.userPlane.shotLoadMapping() ;
+                this.userPlane.shotStopMapping() ;
             }
 
             this.drawPlane(this.userPlane) ;
@@ -94,21 +95,22 @@ class Painter {
 
         if( !image ) return ;
 
-        if( plane.getShotStatus() === ShotStatus.ACTION && plane.wall ) {
+        if( plane.checkShotAction() && plane.wall ) {
 
             const shotImgList = plane.getImgList() ;
 
+            const { shotPositionX, shotPositionY } = plane.getShotPosition(false) ;
+
             if( shotImgList ) {
                 this.shotList.createShot(
-                    plane.position.x - 60,
-                    plane.position.y,
+                    shotPositionX,
+                    shotPositionY,
                     plane.wall,
-                    10,
-                    8,
-                    9,
+                    plane.getShotSpeed(),
+                    plane.getShotListNormalImageIndex(),
+                    plane.getShotCollisionImageIndex(),
                     false,
-                    shotImgList,
-                    false
+                    shotImgList
                 ) ;
             }
             plane.shotStopMapping() ;

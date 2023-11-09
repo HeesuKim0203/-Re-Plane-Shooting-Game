@@ -1,45 +1,69 @@
 import Wall from './Wall'
-import { Shot } from './Shot'
 import { Obj, Direction } from './util'
-  
-export enum ShotStatus {
-    LOAD = 0,
+ 
+export type PlaneData = {
+    planeImageSrc : string
+    speed : number
+    shootImgSrcList : string[]
+    shotDelay : number
+    shotSpeed : number
+    shotListNormalImageIndex : number
+    shotCollisionImageIndex : number
+} ;
+
+enum ShotStatus {
+    STOP = 0,
     ACTION = 1,
-    STOP = 2
 }
 
 class Plane extends Obj {
+    // Plane Data
     private id : number = 0 ;
     private img : HTMLImageElement | null = null ;
     private shotAction : ShotStatus = ShotStatus.STOP ;
-    private shotDelay : number = 2000 ;
+    private shotDelay : number = 1000 ;
+    private shotMappingPid : number = 0 ;
+    private size : number = 0 ;
 
-    private shootImgList : HTMLImageElement[] | null = null ;
-    
+    // Shot Data
+    private shotImgList : HTMLImageElement[] | null = null ;
+    private shotSpeed : number = 0 ;
+    private shotListNormalImageIndex : number = 0 ;
+    private shotCollisionImageIndex : number = 0 ;
+
     constructor( 
         id : number, 
-        size : number, 
-        imgSrc : string, 
-        positionX : number, 
-        positionY : number, 
-        wall : Wall, 
-        speed : number, 
-        shootImgSrcList : string[],
-        shotDelay? : number,
+        size : number,
+        wall : Wall,
+        positionX : number,
+        positionY : number,
+        {
+            planeImageSrc,
+            speed,
+            shootImgSrcList,
+            shotDelay,
+            shotSpeed,
+            shotListNormalImageIndex,
+            shotCollisionImageIndex,
+        } : PlaneData
     ) {
         
         super( positionX, positionY, wall, speed ) ;
 
         this.id = id ;
+        this.size = size ;
 
         this.img = new Image() ;
-        this.img.src = imgSrc ;
+        this.img.src = planeImageSrc ;
         this.img.width = size ;
         this.img.height = size ;
 
-        if( shotDelay ) this.shotDelay = shotDelay ;
+        this.shotDelay = shotDelay ;
+        this.shotSpeed = shotSpeed ;
+        this.shotListNormalImageIndex = shotListNormalImageIndex ;
+        this.shotCollisionImageIndex =  shotCollisionImageIndex ;
 
-        this.shootImgList = shootImgSrcList.map(( src : string ) => {
+        this.shotImgList = shootImgSrcList.map(( src : string ) => {
             const img = new Image() ;
             img.width = size ;
             img.height = size ;
@@ -48,20 +72,52 @@ class Plane extends Obj {
         }) ;
     }
 
-    public getId()             { return this.id ; } 
-    public getImg()            { return this.img ; }
-    public getImgList()        { return this.shootImgList ; }
-    public getShotStatus()     { return this.shotAction ; }
-    public getShotDelay()      { return this.shotDelay ; }
-    public shotActionMapping() {
-        if( this.shotAction === ShotStatus.LOAD ) return ;
-        this.shotAction = ShotStatus.ACTION ;
+    public getId()                          { return this.id ; } 
+    public getImg()                         { return this.img ; }
+    public getImgList()                     { return this.shotImgList ; }
+    public getShotStatus()                  { return this.shotAction ; }
+    public getShotDelay()                   { return this.shotDelay ; }
+    public getShotMappingPid()              { return this.shotMappingPid ; }
+    public getSize()                        { return this.size ; }
+    public getShotSpeed()                   { return this.shotSpeed ; }
+    public getShotListNormalImageIndex()    { return this.shotListNormalImageIndex ; }
+    public getShotCollisionImageIndex()     { return this.shotCollisionImageIndex ; }
+    
+    public getShotPosition( direction : boolean ) {
+
+        let shotPositionX ;
+
+        const middle = (this.size / 10) * 6  ;
+
+        if( direction ) shotPositionX = this.position.x + middle ;
+        else shotPositionX = this.position.x - middle ;
+
+        const shotPositionY = this.position.y ; 
+        
+        return { shotPositionX, shotPositionY }
     }
-    public shotLoadMapping() {
-        this.shotAction =  ShotStatus.LOAD ; 
+
+    public checkShotAction() {
+        return this.shotAction === ShotStatus.ACTION ;
+    }
+    public checkShotStop() {
+        return this.shotAction === ShotStatus.STOP ;
+    }
+    public shotActionMapping() {
+        this.shotAction = ShotStatus.ACTION ;
     }
     public shotStopMapping() {
         this.shotAction =  ShotStatus.STOP ; 
+    }
+    public shotMapping() {
+        this.shotMappingPid = window.setInterval(() => {
+            this.shotActionMapping() ;
+        }, this.getShotDelay()) ;
+    }
+    // We'll must have to run it before delete instance
+    public deleteShotMapping() {
+        clearInterval(this.shotMappingPid) ;
+        this.shotMappingPid = 0 ;
     }
 }
 
@@ -85,7 +141,10 @@ class UserPlane extends Plane {
                 this.direction.left = true ;
                 break ;
             case(' ') :
-                this.shotActionMapping() ;
+                if( !this.getShotMappingPid() ) {
+                    this.shotActionMapping() ;
+                    this.shotMapping() ;
+                }
                 break ;
             default : 
                 break ;
@@ -110,7 +169,7 @@ class UserPlane extends Plane {
                 this.direction.left = false ;
                 break ;
             case(' ') :
-                this.shotStopMapping() ;
+                this.deleteShotMapping() ;
                 break ;
             default : 
                 break ;
@@ -122,16 +181,14 @@ class Level1EnemyPlane extends Plane {
 
     constructor( 
         id : number, 
-        size : number, 
-        imgSrc : string, 
-        positionX : number, 
-        positionY : number, 
-        wall : Wall, 
-        speed : number, 
-        shootImgSrcList : string[],
-        shotDelay : number|undefined,
+        size : number,
+        wall : Wall,
+        positionX : number,
+        positionY : number,
+        planeData : PlaneData
     ) {
-        super(id, size, imgSrc, positionX, positionY, wall, 3, shootImgSrcList, shotDelay) ;
+        super( id, size, wall, positionX, positionY, planeData ) ;
+
         this.movementMapping() ;
         this.shotMapping() ;
     }
@@ -139,13 +196,6 @@ class Level1EnemyPlane extends Plane {
     public movementMapping() {
         this.direction.left = true ;
     }
-
-    public shotMapping() {
-        setInterval(() => {
-            this.shotActionMapping() ;
-        }, this.getShotDelay()) ;
-    }
-
 }
   
 export { Plane, UserPlane, Direction, Level1EnemyPlane } ;
