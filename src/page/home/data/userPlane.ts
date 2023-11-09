@@ -10,6 +10,7 @@ import userPlaneSrc from '../img/planes/user_airplane.png'
 
 const userPlaneData : PlaneData = {
     planeImageSrc : userPlaneSrc,
+    size : 100,
     speed : 3,
     life : 3,
     shotDamage : 1,

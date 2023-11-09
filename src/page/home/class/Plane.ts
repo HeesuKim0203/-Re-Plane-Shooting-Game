@@ -5,6 +5,7 @@ export type PlaneData = {
     planeImageSrc : string
     speed : number
     life : number
+    size : number
     shotDamage : number
     shootImgSrcList : string[]
     shotDelay : number
@@ -37,12 +38,12 @@ class Plane extends Obj {
 
     constructor( 
         id : number, 
-        size : number,
         wall : Wall,
         positionX : number,
         positionY : number,
         {
             planeImageSrc,
+            size,
             speed,
             life,
             shotDamage,
@@ -194,13 +195,12 @@ class EnemyPlane extends Plane {
 
     constructor( 
         id : number, 
-        size : number,
         wall : Wall,
         positionX : number,
         positionY : number,
         planeData : PlaneData
     ) {
-        super( id, size, wall, positionX, positionY, planeData ) ;
+        super( id, wall, positionX, positionY, planeData ) ;
 
         this.movementMapping() ;
         this.shotMapping() ;
@@ -209,10 +209,6 @@ class EnemyPlane extends Plane {
     public movementMapping() {
         this.direction.left = true ;
     }
-}
-
-class Level1Enemy extends EnemyPlane {
-    
 }
   
 export { Plane, UserPlane, Direction, EnemyPlane } ;
