@@ -12,6 +12,7 @@ export class Shot extends Obj {
     private currentIndex : number = 0 ;
     private normalImageIndex : number = 0 ;
     private collisionImageIndex : number = 0 ;
+    private damage : number = 0 ;
 
     constructor(
         positionX : number, 
@@ -22,6 +23,7 @@ export class Shot extends Obj {
         collisionImageIndex : number,
         direction : boolean, 
         imgList : HTMLImageElement[],
+        damage : number
     ) {
         super( positionX, positionY, wall, speed ) ;
 
@@ -29,6 +31,7 @@ export class Shot extends Obj {
         this.collisionImageIndex = collisionImageIndex ;
 
         this.imgList = imgList ;
+        this.damage = damage ;
 
         // Todo : direction, userShot update
         if( direction ) {
@@ -107,6 +110,7 @@ export class ShotList {
         collisionImageIndex : number,
         direction : boolean, 
         imgList : HTMLImageElement[],
+        damage : number
     ) {
 
         const shot = new Shot(
@@ -118,6 +122,7 @@ export class ShotList {
             collisionImageIndex,
             direction,
             imgList,
+            damage
         ) ;
  
         this.ShotList = this.ShotList.concat(shot) ;

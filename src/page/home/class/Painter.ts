@@ -63,7 +63,8 @@ class Painter {
                         this.userPlane.getShotListNormalImageIndex(),
                         this.userPlane.getShotCollisionImageIndex(),
                         true,
-                        shotImgList
+                        shotImgList,
+                        this.userPlane.getShotDamage()
                     ) ;
                 }
                 this.userPlane.shotStopMapping() ;
@@ -110,7 +111,8 @@ class Painter {
                     plane.getShotListNormalImageIndex(),
                     plane.getShotCollisionImageIndex(),
                     false,
-                    shotImgList
+                    shotImgList,
+                    plane.getShotDamage()
                 ) ;
             }
             plane.shotStopMapping() ;

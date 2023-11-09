@@ -11,6 +11,8 @@ import level1EnemyPlaneSrc from '../img/planes/level1_enemy_planes.png'
 const level1PlaneData : PlaneData = {
     planeImageSrc : level1EnemyPlaneSrc,
     speed : 3,
+    life : 2,
+    shotDamage : 1 ,
     shootImgSrcList : [
         shoot1Src, shoot1Src,
         shoot2Src, shoot2Src,

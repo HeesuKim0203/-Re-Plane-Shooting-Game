@@ -4,6 +4,8 @@ import { Obj, Direction } from './util'
 export type PlaneData = {
     planeImageSrc : string
     speed : number
+    life : number
+    shotDamage : number
     shootImgSrcList : string[]
     shotDelay : number
     shotSpeed : number
@@ -24,12 +26,14 @@ class Plane extends Obj {
     private shotDelay : number = 1000 ;
     private shotMappingPid : number = 0 ;
     private size : number = 0 ;
+    private life : number = 0 ;
 
     // Shot Data
     private shotImgList : HTMLImageElement[] | null = null ;
     private shotSpeed : number = 0 ;
     private shotListNormalImageIndex : number = 0 ;
     private shotCollisionImageIndex : number = 0 ;
+    private shotDamage : number = 0 ;
 
     constructor( 
         id : number, 
@@ -40,6 +44,8 @@ class Plane extends Obj {
         {
             planeImageSrc,
             speed,
+            life,
+            shotDamage,
             shootImgSrcList,
             shotDelay,
             shotSpeed,
@@ -52,12 +58,14 @@ class Plane extends Obj {
 
         this.id = id ;
         this.size = size ;
+        this.life = life ;
 
         this.img = new Image() ;
         this.img.src = planeImageSrc ;
         this.img.width = size ;
         this.img.height = size ;
 
+        this.shotDamage = shotDamage ;
         this.shotDelay = shotDelay ;
         this.shotSpeed = shotSpeed ;
         this.shotListNormalImageIndex = shotListNormalImageIndex ;
@@ -82,7 +90,8 @@ class Plane extends Obj {
     public getShotSpeed()                   { return this.shotSpeed ; }
     public getShotListNormalImageIndex()    { return this.shotListNormalImageIndex ; }
     public getShotCollisionImageIndex()     { return this.shotCollisionImageIndex ; }
-    
+    public getLife()                        { return this.life ; }
+    public getShotDamage()                  { return this.shotDamage ; }    
     public getShotPosition( direction : boolean ) {
 
         let shotPositionX ;
@@ -95,6 +104,10 @@ class Plane extends Obj {
         const shotPositionY = this.position.y ; 
         
         return { shotPositionX, shotPositionY }
+    }
+
+    public setLife( life : number ) {
+        this.life = life ;
     }
 
     public checkShotAction() {
@@ -177,7 +190,7 @@ class UserPlane extends Plane {
     }
 }
 
-class Level1EnemyPlane extends Plane {
+class EnemyPlane extends Plane {
 
     constructor( 
         id : number, 
@@ -197,5 +210,9 @@ class Level1EnemyPlane extends Plane {
         this.direction.left = true ;
     }
 }
+
+class Level1Enemy extends EnemyPlane {
+    
+}
   
-export { Plane, UserPlane, Direction, Level1EnemyPlane } ;
+export { Plane, UserPlane, Direction, EnemyPlane } ;
