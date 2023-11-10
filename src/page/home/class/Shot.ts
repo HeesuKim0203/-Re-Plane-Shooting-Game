@@ -1,3 +1,4 @@
+import { Plane } from './Plane';
 import Wall from './Wall'
 import { Obj } from './util'
 
@@ -35,9 +36,9 @@ export class Shot extends Obj {
 
         // Todo : direction, userShot update
         if( direction ) {
-            this.direction.right = true ;
+            this.direction.right = true ; // User Plane Shot
         }else {
-            this.direction.left = true ;
+            this.direction.left = true ;  // Enemy Plane Shot
         }
     }
 
@@ -46,6 +47,8 @@ export class Shot extends Obj {
     public getCollisionImageIndex()                 { return this.collisionImageIndex ; }
     public getState()                               { return this.state ; }
     public getImgList()                             { return this.imgList ; }
+    public getDirection()                           { return this.direction ; }
+    public getDamage()                              { return this.damage ; }
 
     public setCurrentIndex( currentIndex : number ) { 
         // Todo : Image List Index Vaildation
@@ -126,6 +129,40 @@ export class ShotList {
         ) ;
  
         this.shotList = this.shotList.concat(shot) ;
+    }
+
+    public shotToDamagePlane( user : boolean, ...plane : Plane[] ) {
+
+        if( user ) { // UserPlane
+            const shotList = this.shotList.filter(( shot : Shot ) => ( shot.getDirection().left === true )) ; // Enemy Shot
+
+            shotList.forEach(( shot : Shot ) => {
+                plane.forEach(( plane : Plane ) => {
+                    if( plane.position.y < shot.position.y && plane.position.y + plane.getSize() > shot.position.y ) {
+                        if( plane.position.x + plane.getSize() <= shot.position.x ) {
+                            plane.setLife(plane.getLife() - shot.getDamage()) ;
+                            console.log(plane.getLife()) ;
+                            shot.setStateToCollison() ;
+                        }
+                    }
+                }) ;
+            }) ;
+
+        }else {  // enemyPlane
+            const shotList = this.shotList.filter(( shot : Shot ) => ( shot.getDirection().left === false )) ; // Enemy Shot
+
+            shotList.forEach(( shot : Shot ) => {
+                plane.forEach(( plane : Plane ) => {
+                    if( plane.position.y < shot.position.y && plane.position.y + plane.getSize() > shot.position.y ) {
+                        if( plane.position.x >= shot.position.x ) {
+                            plane.setLife(plane.getLife() - shot.getDamage()) ;
+                            console.log(plane.getLife()) ;
+                            shot.setStateToCollison() ;
+                        }
+                    }
+                }) ;
+            }) ;
+        }
     }
 
     public deleteShot() {

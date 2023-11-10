@@ -32,6 +32,7 @@ const Canvas = ( props : CanvasProps ) => {
     paint.runAnimationFrame() ;
 
     const game = new Game({ title : round1.title, enemyPlan : round1.enemyPlaneList, wall : wall, painter : paint, enemyPlaneDataList : enemyPlaneList }) ;
+    
     game.start() ;
   }) ; 
 

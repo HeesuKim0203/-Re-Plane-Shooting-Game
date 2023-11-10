@@ -29,12 +29,12 @@ class Painter {
         this.planes = this.planes.concat(addPlane) ;
     }
 
-    public unregisterPlane( removePlane : Plane ) : void {
-        const index = this.planes.findIndex((plane : Plane) => ( plane.getId() == removePlane.getId() )) ;
+    public unregisterPlane() : void {
+        const index = this.planes.findIndex((plane : Plane) => ( plane.getLife() === 0 )) ;
 
         this.planes = [
             ...this.planes.slice(0, index),
-            ...this.planes.slice(index - 1, this.planes.length) 
+            ...this.planes.slice(index + 1, this.planes.length) 
         ] ;
     }
 
@@ -46,6 +46,9 @@ class Painter {
 
         // Draw User Planes
         if( this.userPlane ) {
+
+            this.shotList.shotToDamagePlane(true, ...[ this.userPlane ]) ;
+
             this.userPlane.move() ;
             
             if( this.userPlane.checkShotAction() && this.userPlane.wall ) {
@@ -72,6 +75,8 @@ class Painter {
 
             this.drawPlane(this.userPlane) ;
         }
+
+        this.shotList.shotToDamagePlane(false, ...this.planes) ;
 
         // Draw Planes
         this.planes.forEach((plane : Plane) => this.drawPlane(plane)) ;
