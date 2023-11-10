@@ -28,7 +28,7 @@ const enemyPlaneList : enemyPlanLevelData[] = [
                 shoot4Src, shoot4Src,
                 shoot5Src
             ],
-            shotDelay : 1500,
+            shotDelay : 2000,
             shotSpeed : 10,
             shotListNormalImageIndex : 8,
             shotCollisionImageIndex : 9

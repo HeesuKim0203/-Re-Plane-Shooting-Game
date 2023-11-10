@@ -18,8 +18,6 @@ const Canvas = ( props : CanvasProps ) => {
   
   const canvasRef = useCanvas((canvas) => {
 
-    console.log(round1) ;
-
     const width = props.width as number ;
     const height = props.height as number ;
 

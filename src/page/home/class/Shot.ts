@@ -66,7 +66,7 @@ export class Shot extends Obj {
                         this.state = State.COLLISION ;
                     }
                 }
-                if(this.direction.right) {
+                if( this.direction.right ) {
                     if ( this.wall?.getRight() > this.position.x + this.speed ) {
                         this.position.x += this.speed ;
                     }else {
@@ -85,14 +85,14 @@ export class Shot extends Obj {
 }
 
 export class ShotList {
-    private ShotList : Shot[] = [] ;
+    private shotList : Shot[] = [] ;
     private instance : ShotList | null = null ;
 
     constructor() {}
 
     public getNormalShotState()    { return State.NORAML ; }
     public getCollisonShotState()  { return State.COLLISION ; }
-    public getShots()              { return this.ShotList ; }
+    public getShots()              { return this.shotList ; }
     
     public getInstance() {
         if( this.instance ) return this.instance ;
@@ -125,16 +125,16 @@ export class ShotList {
             damage
         ) ;
  
-        this.ShotList = this.ShotList.concat(shot) ;
+        this.shotList = this.shotList.concat(shot) ;
     }
 
     public deleteShot() {
-        const newShotList = this.ShotList.filter(( Shot : Shot ) => Shot.getState() !== this.getCollisonShotState()) ;
-        if( newShotList ) this.ShotList = newShotList ;
+        const newShotList = this.shotList.filter(( Shot : Shot ) => Shot.getState() !== this.getCollisonShotState()) ;
+        if( newShotList ) this.shotList = newShotList ;
     }
 
     public shotMove() {
-        this.ShotList.forEach((Shot : Shot) => {
+        this.shotList.forEach((Shot : Shot) => {
             Shot.move() ;
             Shot.setCurrentIndex(Shot.getCurrentIndex() + 1) ;
         }) ;
