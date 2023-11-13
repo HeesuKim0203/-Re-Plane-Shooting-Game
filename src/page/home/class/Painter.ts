@@ -31,12 +31,14 @@ class Painter {
 
     // Todo : Multiple Plane Unregister
     public unregisterPlane() : void {
-        const index = this.planes.findIndex((plane : Plane) => ( plane.getLife() === 0 )) ;
+        const notLifePlane = this.planes.filter((plane : Plane) => ( plane.getLife() === 0 )) ;
 
-        this.planes = [
-            ...this.planes.slice(0, index),
-            ...this.planes.slice(index + 1, this.planes.length) 
-        ] ;
+        // this.planes = [
+        //     ...this.planes.slice(0, index),
+        //     ...this.planes.slice(index + 1, this.planes.length) 
+        // ] ;
+
+        this.planes = this.planes.filter((plane : Plane) => !notLifePlane.includes(plane)) ;
     }
 
     private draw() {
@@ -63,6 +65,7 @@ class Painter {
                         shotPositionX, 
                         shotPositionY,
                         this.userPlane.wall,
+                        this.userPlane.getShotSize(),
                         this.userPlane.getShotSpeed(),
                         this.userPlane.getShotListNormalImageIndex(),
                         this.userPlane.getShotCollisionImageIndex(),
@@ -95,6 +98,8 @@ class Painter {
         }) ;
         this.shotList.shotMove() ;
         this.shotList.deleteShot() ;
+
+        this.unregisterPlane() ;
     }
 
     private drawPlane( plane : Plane ) {
@@ -113,6 +118,7 @@ class Painter {
                     shotPositionX,
                     shotPositionY,
                     plane.wall,
+                    plane.getShotSize(),
                     plane.getShotSpeed(),
                     plane.getShotListNormalImageIndex(),
                     plane.getShotCollisionImageIndex(),

@@ -10,7 +10,14 @@ import userPlaneSrc from '../img/planes/user_airplane.png'
 
 const userPlaneData : PlaneData = {
     planeImageSrc : userPlaneSrc,
-    size : 100,
+    size : {
+        width : 105,
+        height : 82
+    },
+    shotSize : {
+        width : 46,
+        height : 11
+    },
     speed : 3,
     life : 3,
     shotDamage : 1,
@@ -21,7 +28,7 @@ const userPlaneData : PlaneData = {
         shoot4Src, shoot4Src,
         shoot5Src
     ],
-    shotDelay : 500,
+    shotDelay : 200,
     shotSpeed : 10,
     shotListNormalImageIndex : 8,
     shotCollisionImageIndex : 9

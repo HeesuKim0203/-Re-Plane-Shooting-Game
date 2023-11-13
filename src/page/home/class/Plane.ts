@@ -1,11 +1,12 @@
 import Wall from './Wall'
-import { Obj, Direction } from './util'
+import { Obj, Direction, size } from './util'
  
 export type PlaneData = {
     planeImageSrc : string
     speed : number
     life : number
-    size : number
+    size : size
+    shotSize : size
     shotDamage : number
     shootImgSrcList : string[]
     shotDelay : number
@@ -26,7 +27,7 @@ class Plane extends Obj {
     private shotAction : ShotStatus = ShotStatus.STOP ;
     private shotDelay : number = 1000 ;
     private shotMappingPid : number = 0 ;
-    private size : number = 0 ;
+    private size : size = { width : 0, height : 0 } ;
     private life : number = 0 ;
 
     // Shot Data
@@ -35,6 +36,7 @@ class Plane extends Obj {
     private shotListNormalImageIndex : number = 0 ;
     private shotCollisionImageIndex : number = 0 ;
     private shotDamage : number = 0 ;
+    private shotSize : size = { width : 0, height : 0 } ;
 
     constructor( 
         id : number, 
@@ -44,6 +46,7 @@ class Plane extends Obj {
         {
             planeImageSrc,
             size,
+            shotSize,
             speed,
             life,
             shotDamage,
@@ -63,19 +66,20 @@ class Plane extends Obj {
 
         this.img = new Image() ;
         this.img.src = planeImageSrc ;
-        this.img.width = size ;
-        this.img.height = size ;
+        this.img.width = size.width ;
+        this.img.height = size.height ;
 
         this.shotDamage = shotDamage ;
         this.shotDelay = shotDelay ;
         this.shotSpeed = shotSpeed ;
         this.shotListNormalImageIndex = shotListNormalImageIndex ;
-        this.shotCollisionImageIndex =  shotCollisionImageIndex ;
+        this.shotCollisionImageIndex = shotCollisionImageIndex ;
+        this.shotSize = shotSize ;
 
         this.shotImgList = shootImgSrcList.map(( src : string ) => {
             const img = new Image() ;
-            img.width = size ;
-            img.height = size ;
+            img.width = shotSize.width ;
+            img.height = shotSize.height ;
             img.src = src ;
             return img ;
         }) ;
@@ -93,16 +97,17 @@ class Plane extends Obj {
     public getShotCollisionImageIndex()     { return this.shotCollisionImageIndex ; }
     public getLife()                        { return this.life ; }
     public getShotDamage()                  { return this.shotDamage ; }    
+    public getShotSize()                    { return this.shotSize ; }
     public getShotPosition( direction : boolean ) {
 
         let shotPositionX ;
 
-        const middle = (this.size / 10) * 6  ;
+        const middle = (this.size.height / 10) * 6  ;
 
         if( direction ) shotPositionX = this.position.x + middle ;
         else shotPositionX = this.position.x - middle ;
 
-        const shotPositionY = this.position.y ; 
+        const shotPositionY = this.position.y + (this.size.height / 2) ; 
         
         return { shotPositionX, shotPositionY }
     }
@@ -200,7 +205,7 @@ class EnemyPlane extends Plane {
         positionY : number,
         planeData : PlaneData
     ) {
-        super( id, wall, positionX, positionY, planeData ) ;
+        super( id, wall,  positionX, positionY, planeData ) ;
 
         this.movementMapping() ;
         this.shotMapping() ;

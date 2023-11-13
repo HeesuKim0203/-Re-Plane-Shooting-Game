@@ -19,6 +19,11 @@ export enum Direction {
     RIGHT = 3,
 }
 
+export type size = {
+    width : number
+    height : number
+}
+
 export class Obj {
     wall : Wall | null = null ;
     direction : Move = { down : false, up : false, left : false, right : false } ;

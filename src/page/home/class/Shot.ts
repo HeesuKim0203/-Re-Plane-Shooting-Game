@@ -1,6 +1,6 @@
 import { Plane } from './Plane';
 import Wall from './Wall'
-import { Obj } from './util'
+import { Obj, size } from './util'
 
 enum State {
     NORAML = 0,
@@ -14,11 +14,13 @@ export class Shot extends Obj {
     private normalImageIndex : number = 0 ;
     private collisionImageIndex : number = 0 ;
     private damage : number = 0 ;
+    private size : size = { width : 0, height : 0 } ;
 
     constructor(
         positionX : number, 
         positionY : number, 
         wall : Wall, 
+        size : size,
         speed : number, 
         normalImageIndex : number,
         collisionImageIndex : number,
@@ -33,6 +35,7 @@ export class Shot extends Obj {
 
         this.imgList = imgList ;
         this.damage = damage ;
+        this.size = size ;
 
         // Todo : direction, userShot update
         if( direction ) {
@@ -49,6 +52,7 @@ export class Shot extends Obj {
     public getImgList()                             { return this.imgList ; }
     public getDirection()                           { return this.direction ; }
     public getDamage()                              { return this.damage ; }
+    public getSize()                                { return this.size ; }
 
     public setCurrentIndex( currentIndex : number ) { 
         // Todo : Image List Index Vaildation
@@ -108,6 +112,7 @@ export class ShotList {
         positionX : number, 
         positionY : number, 
         wall : Wall, 
+        size : size,
         speed : number, 
         normalImageIndex : number,
         collisionImageIndex : number,
@@ -120,6 +125,7 @@ export class ShotList {
             positionX,
             positionY,
             wall,
+            size,
             speed,
             normalImageIndex,
             collisionImageIndex,
@@ -138,8 +144,8 @@ export class ShotList {
 
             shotList.forEach(( shot : Shot ) => {
                 plane.forEach(( plane : Plane ) => {
-                    if( plane.position.y < shot.position.y && plane.position.y + plane.getSize() > shot.position.y ) {
-                        if( plane.position.x + plane.getSize() <= shot.position.x ) {
+                    if( plane.position.y < shot.position.y + shot.getSize().height && plane.position.y + plane.getSize().height > shot.position.y ) {
+                        if( plane.position.x + plane.getSize().width >= shot.position.x ) {
                             plane.setLife(plane.getLife() - shot.getDamage()) ;
                             console.log(plane.getLife()) ;
                             shot.setStateToCollison() ;
@@ -153,8 +159,8 @@ export class ShotList {
 
             shotList.forEach(( shot : Shot ) => {
                 plane.forEach(( plane : Plane ) => {
-                    if( plane.position.y < shot.position.y && plane.position.y + plane.getSize() > shot.position.y ) {
-                        if( plane.position.x >= shot.position.x ) {
+                    if( plane.position.y < shot.position.y + shot.getSize().height && plane.position.y + plane.getSize().height > shot.position.y ) {
+                        if( plane.position.x <= shot.position.x ) {
                             plane.setLife(plane.getLife() - shot.getDamage()) ;
                             console.log(plane.getLife()) ;
                             shot.setStateToCollison() ;

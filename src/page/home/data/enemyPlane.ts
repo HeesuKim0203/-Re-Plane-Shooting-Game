@@ -17,8 +17,15 @@ const enemyPlaneList : enemyPlanLevelData[] = [
         level : 1,
         planeDate : {
             planeImageSrc : level1EnemyPlaneSrc,
-            size : 100,
-            speed : 1.5,
+            size : {
+                width : 77,
+                height : 34
+            },
+            shotSize : {
+                width : 46,
+                height : 11
+            },
+            speed : 1,
             life : 2,
             shotDamage : 1 ,
             shootImgSrcList : [
@@ -28,8 +35,8 @@ const enemyPlaneList : enemyPlanLevelData[] = [
                 shoot4Src, shoot4Src,
                 shoot5Src
             ],
-            shotDelay : 2000,
-            shotSpeed : 10,
+            shotDelay : 3500,
+            shotSpeed : 8,
             shotListNormalImageIndex : 8,
             shotCollisionImageIndex : 9
         }

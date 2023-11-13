@@ -7,8 +7,8 @@ const ENEMPLANE_START_POSITION_X = 1200 ;
 const ENEMPLANE_START_POSITION_Y_MIN = 0 ;
 const ENEMPLANE_START_POSITION_Y_MAX = 600 ;
 
-const ENEMPLANE_MIN_TIME = 2000 ;
-const ENEMPLANE_MAX_TIME = 4000 ;
+const ENEMPLANE_MIN_TIME = 5000 ;
+const ENEMPLANE_MAX_TIME = 25000 ;
 
 type EnemyPlanImpomation = {
     level : number
@@ -64,8 +64,9 @@ export default class Game {
                     const findIndex = this.enemyPlaneDataList.findIndex((enemyPlanData : enemyPlanLevelData) => enemyPlanData.level === enemyPlaneImportmation.level) ;
                     const planeData = this.enemyPlaneDataList[findIndex].planeDate ;
 
-                    const y = Math.floor(Math.random() * (( ENEMPLANE_START_POSITION_Y_MAX - planeData.size ) - ENEMPLANE_START_POSITION_Y_MIN - 1)) + ENEMPLANE_START_POSITION_Y_MIN ;
-                    const time = Math.floor(Math.random() * (ENEMPLANE_MAX_TIME - ENEMPLANE_MIN_TIME - 1)) + ENEMPLANE_MIN_TIME + index * 3000 ;
+                    const y = Math.floor(Math.random() * (( ENEMPLANE_START_POSITION_Y_MAX - planeData.size.height ) - ENEMPLANE_START_POSITION_Y_MIN - 1)) + ENEMPLANE_START_POSITION_Y_MIN ;
+                    const time = Math.floor(Math.random() * (ENEMPLANE_MAX_TIME - ENEMPLANE_MIN_TIME - 1)) + ENEMPLANE_MIN_TIME ;
+                    console.log(time) ;
                     setTimeout(() => {
                         if(this.wall) {
                             const enemyPlan = new EnemyPlane(id, this.wall, ENEMPLANE_START_POSITION_X, y, planeData) ;
