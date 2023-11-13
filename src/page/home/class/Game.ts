@@ -8,7 +8,7 @@ const ENEMPLANE_START_POSITION_Y_MIN = 0 ;
 const ENEMPLANE_START_POSITION_Y_MAX = 600 ;
 
 const ENEMPLANE_MIN_TIME = 2000 ;
-const ENEMPLANE_MAX_TIME = 20000 ;
+const ENEMPLANE_MAX_TIME = 4000 ;
 
 type EnemyPlanImpomation = {
     level : number
@@ -34,6 +34,7 @@ export default class Game {
     private wall : Wall | null = null ;
     private painter : Painter | null = null ;
     private enemyPlaneDataList : enemyPlanLevelData[] = [] ;
+    private gameStatus : GameStatus = GameStatus.START ;
     
     constructor({
         title,
@@ -49,7 +50,11 @@ export default class Game {
         this.enemyPlaneDataList = enemyPlaneDataList ;
     }
 
-    public getTitle() { return this.title ; }
+    public getTitle()           { return this.title ; }
+    public getGameStatus()      { return this.gameStatus ; }
+    public setGameStatusEnd()   { this.gameStatus = GameStatus.END ; }
+    
+    // data.json Data => Painter 
     public start() {
         let id = 0 ; 
 
@@ -60,7 +65,7 @@ export default class Game {
                     const planeData = this.enemyPlaneDataList[findIndex].planeDate ;
 
                     const y = Math.floor(Math.random() * (( ENEMPLANE_START_POSITION_Y_MAX - planeData.size ) - ENEMPLANE_START_POSITION_Y_MIN - 1)) + ENEMPLANE_START_POSITION_Y_MIN ;
-                    const time = Math.floor(Math.random() * (ENEMPLANE_MAX_TIME - ENEMPLANE_MIN_TIME - 1)) + ENEMPLANE_MIN_TIME ;
+                    const time = Math.floor(Math.random() * (ENEMPLANE_MAX_TIME - ENEMPLANE_MIN_TIME - 1)) + ENEMPLANE_MIN_TIME + index * 3000 ;
                     setTimeout(() => {
                         if(this.wall) {
                             const enemyPlan = new EnemyPlane(id, this.wall, ENEMPLANE_START_POSITION_X, y, planeData) ;
@@ -71,11 +76,17 @@ export default class Game {
                 }
             }) ;
         }
-    }
-    public createEnemyPlane() {
 
+        const gameEndPid = setInterval(() => {
+            if( this.painter?.getPlanes().length === 0 ) { 
+                clearInterval(gameEndPid)
+                this.end() ;
+            }
+        }, 1000) ;
     }
-    public status() {
 
+    // Game Clear
+    public end() {
+        
     }
 }

@@ -8,7 +8,7 @@ import { UserPlane } from './class/Plane'
 
 import userPlaneData from './data/userPlane'
 
-import round1 from './round/round1.json'
+import gameData from './gameData/data.json'
 import Game from './class/Game'
 import enemyPlaneList from './data/enemyPlane'
 
@@ -31,7 +31,7 @@ const Canvas = ( props : CanvasProps ) => {
     paint.initBackground() ;
     paint.runAnimationFrame() ;
 
-    const game = new Game({ title : round1.title, enemyPlan : round1.enemyPlaneList, wall : wall, painter : paint, enemyPlaneDataList : enemyPlaneList }) ;
+    const game = new Game({ title : gameData.title, enemyPlan : gameData.enemyPlaneList, wall : wall, painter : paint, enemyPlaneDataList : enemyPlaneList }) ;
     
     game.start() ;
   }) ; 

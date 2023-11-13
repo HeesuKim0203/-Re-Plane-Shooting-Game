@@ -1,5 +1,5 @@
 {
-    "title" : "Round1",
+    "title" : "Plane Game",
     "enemyPlaneList" : [
         { "level" : 1, "num" : 28 }
     ]

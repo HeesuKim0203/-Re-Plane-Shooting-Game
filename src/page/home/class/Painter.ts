@@ -29,6 +29,7 @@ class Painter {
         this.planes = this.planes.concat(addPlane) ;
     }
 
+    // Todo : Multiple Plane Unregister
     public unregisterPlane() : void {
         const index = this.planes.findIndex((plane : Plane) => ( plane.getLife() === 0 )) ;
 
