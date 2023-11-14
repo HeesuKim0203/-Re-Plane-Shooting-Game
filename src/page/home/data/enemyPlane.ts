@@ -7,12 +7,12 @@ import shoot5Src from '../img/shot/shot5_5.png'
 import level1EnemyPlaneSrc from '../img/planes/level1_enemy_planes.png'
 import { PlaneData } from '../class/Plane'
 
-export type enemyPlanLevelData = {
+export type EnemyPlanLevelData = {
     level : number
     planeDate : PlaneData
 }
 
-const enemyPlaneList : enemyPlanLevelData[] = [
+const enemyPlaneList : EnemyPlanLevelData[] = [
     {
         level : 1,
         planeDate : {

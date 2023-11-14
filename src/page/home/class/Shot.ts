@@ -37,7 +37,6 @@ export class Shot extends Obj {
         this.damage = damage ;
         this.size = size ;
 
-        // Todo : direction, userShot update
         if( direction ) {
             this.direction.right = true ; // User Plane Shot
         }else {
@@ -147,7 +146,6 @@ export class ShotList {
                     if( plane.position.y < shot.position.y + shot.getSize().height && plane.position.y + plane.getSize().height > shot.position.y ) {
                         if( plane.position.x + plane.getSize().width >= shot.position.x ) {
                             plane.setLife(plane.getLife() - shot.getDamage()) ;
-                            console.log(plane.getLife()) ;
                             shot.setStateToCollison() ;
                         }
                     }
@@ -155,14 +153,13 @@ export class ShotList {
             }) ;
 
         }else {  // enemyPlane
-            const shotList = this.shotList.filter(( shot : Shot ) => ( shot.getDirection().left === false )) ; // Enemy Shot
+            const shotList = this.shotList.filter(( shot : Shot ) => ( shot.getDirection().left === false )) ; // User Shot
 
             shotList.forEach(( shot : Shot ) => {
                 plane.forEach(( plane : Plane ) => {
                     if( plane.position.y < shot.position.y + shot.getSize().height && plane.position.y + plane.getSize().height > shot.position.y ) {
                         if( plane.position.x <= shot.position.x ) {
                             plane.setLife(plane.getLife() - shot.getDamage()) ;
-                            console.log(plane.getLife()) ;
                             shot.setStateToCollison() ;
                         }
                     }

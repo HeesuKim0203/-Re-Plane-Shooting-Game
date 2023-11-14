@@ -4,7 +4,7 @@ import backgroundSrc from './img/background/background.png'
 import useCanvas from './useCanvas'
 import Painter from './class/Painter'
 import Wall from './class/Wall'
-import { UserPlane } from './class/Plane'
+import { PlaneKind, PlaneList, UserPlane } from './class/Plane'
 
 import userPlaneData from './data/userPlane'
 
@@ -23,7 +23,11 @@ const Canvas = ( props : CanvasProps ) => {
 
     const wall = new Wall(0, 0, width, height) ;
     const userPlane = new UserPlane(0, wall, 0, 0, userPlaneData) ;
-    const paint = new Painter(canvas, backgroundSrc, userPlane) ;
+
+    const planeList = new PlaneList() ;
+    planeList.registerPlane(userPlane, PlaneKind.USERPLANE) ;
+
+    const paint = new Painter(canvas, backgroundSrc, planeList) ;
 
     document.addEventListener('keydown', (event) => userPlane.keyDownToMoveMapping(event));
     document.addEventListener('keyup', (event) => userPlane.keyUpToMoveMapping(event));
@@ -31,7 +35,7 @@ const Canvas = ( props : CanvasProps ) => {
     paint.initBackground() ;
     paint.runAnimationFrame() ;
 
-    const game = new Game({ title : gameData.title, enemyPlan : gameData.enemyPlaneList, wall : wall, painter : paint, enemyPlaneDataList : enemyPlaneList }) ;
+    const game = new Game({ title : gameData.title, enemyPlaneImformationList : gameData.enemyPlaneList, wall : wall, painter : paint, enemyPlaneDataList : enemyPlaneList }, planeList) ;
     
     game.start() ;
   }) ; 

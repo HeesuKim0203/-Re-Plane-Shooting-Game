@@ -1,6 +1,6 @@
-import { enemyPlanLevelData } from "../data/enemyPlane";
+import { EnemyPlanLevelData } from "../data/enemyPlane";
 import Painter from "./Painter";
-import { EnemyPlane } from "./Plane"
+import { PlaneList, PlaneKind } from "./Plane"
 import Wall from "./Wall"
 
 const ENEMPLANE_START_POSITION_X = 1200 ;
@@ -10,17 +10,17 @@ const ENEMPLANE_START_POSITION_Y_MAX = 600 ;
 const ENEMPLANE_MIN_TIME = 5000 ;
 const ENEMPLANE_MAX_TIME = 25000 ;
 
-type EnemyPlanImpomation = {
+type EnemyPlaneImformation = {
     level : number
     num : number
 }
 
-export type roundData = {
+export type GameData = {
     title : string
-    enemyPlan : EnemyPlanImpomation[]
+    enemyPlaneImformationList : EnemyPlaneImformation[]
     wall : Wall
     painter : Painter
-    enemyPlaneDataList : enemyPlanLevelData[]
+    enemyPlaneDataList : EnemyPlanLevelData[]
 }
 
 enum GameStatus {
@@ -30,56 +30,56 @@ enum GameStatus {
 
 export default class Game {
     private title : string = "" ;
-    private enemyPlaneList : EnemyPlanImpomation[] = [] ;
+    private enemyPlaneImformationList : EnemyPlaneImformation[] = [] ;
     private wall : Wall | null = null ;
-    private painter : Painter | null = null ;
-    private enemyPlaneDataList : enemyPlanLevelData[] = [] ;
+    private enemyPlaneDataList : EnemyPlanLevelData[] = [] ;
     private gameStatus : GameStatus = GameStatus.START ;
+
+    private planeList : PlaneList | null = null ;
     
     constructor({
         title,
-        enemyPlan,
+        enemyPlaneImformationList,
         wall,
-        painter,
         enemyPlaneDataList
-    } : roundData) {
+    } : GameData, planeList : PlaneList ) {
         this.title = title ;
-        this.enemyPlaneList = enemyPlan ;
+        this.enemyPlaneImformationList = enemyPlaneImformationList ;
         this.wall = wall ;
-        this.painter = painter ;
         this.enemyPlaneDataList = enemyPlaneDataList ;
+
+        this.planeList = planeList ;
+
+        const p = document.createElement('p') ;
+        p.className = 'absolute' ;
     }
 
     public getTitle()           { return this.title ; }
     public getGameStatus()      { return this.gameStatus ; }
     public setGameStatusEnd()   { this.gameStatus = GameStatus.END ; }
     
-    // data.json Data => Painter 
     public start() {
         let id = 0 ; 
 
-        if( this.painter ) {
-            this.enemyPlaneList.forEach((enemyPlaneImportmation : EnemyPlanImpomation, index : number) => {
-                for(let i = 0 ; i < enemyPlaneImportmation.num ; i++) {
-                    const findIndex = this.enemyPlaneDataList.findIndex((enemyPlanData : enemyPlanLevelData) => enemyPlanData.level === enemyPlaneImportmation.level) ;
-                    const planeData = this.enemyPlaneDataList[findIndex].planeDate ;
+        this.enemyPlaneImformationList.forEach((enemyPlaneImportmation : EnemyPlaneImformation, index : number) => {
+            for(let i = 0 ; i < enemyPlaneImportmation.num ; i++) {
+                const findIndex = this.enemyPlaneDataList.findIndex((enemyPlanData : EnemyPlanLevelData) => enemyPlanData.level === enemyPlaneImportmation.level) ;
+                const planeData = this.enemyPlaneDataList[findIndex].planeDate ;
 
-                    const y = Math.floor(Math.random() * (( ENEMPLANE_START_POSITION_Y_MAX - planeData.size.height ) - ENEMPLANE_START_POSITION_Y_MIN - 1)) + ENEMPLANE_START_POSITION_Y_MIN ;
-                    const time = Math.floor(Math.random() * (ENEMPLANE_MAX_TIME - ENEMPLANE_MIN_TIME - 1)) + ENEMPLANE_MIN_TIME ;
-                    console.log(time) ;
-                    setTimeout(() => {
-                        if(this.wall) {
-                            const enemyPlan = new EnemyPlane(id, this.wall, ENEMPLANE_START_POSITION_X, y, planeData) ;
-                            this.painter?.registerPlane(enemyPlan) ;
-                        }
-                    }, time) ;
-                    id ++;
-                }
-            }) ;
-        }
+                const y = Math.floor(Math.random() * (( ENEMPLANE_START_POSITION_Y_MAX - planeData.size.height ) - ENEMPLANE_START_POSITION_Y_MIN - 1)) + ENEMPLANE_START_POSITION_Y_MIN ;
+                const time = Math.floor(Math.random() * (ENEMPLANE_MAX_TIME - ENEMPLANE_MIN_TIME - 1)) + ENEMPLANE_MIN_TIME ;
+                setTimeout(() => {
+                    if(this.wall && this.planeList) {
+                        this.planeList.createPlane(id, this.wall, ENEMPLANE_START_POSITION_X, y, planeData, PlaneKind.ENEMYPLANE) ;
+                    }
+                }, time) ;
+                id ++;
+            }
+        }) ;
 
+        // Todo : Game End fg setting
         const gameEndPid = setInterval(() => {
-            if( this.painter?.getPlanes().length === 0 ) { 
+            if( this.planeList?.getEnemyPlanes().length === 0 ) { 
                 clearInterval(gameEndPid)
                 this.end() ;
             }

@@ -15,6 +15,11 @@ export type PlaneData = {
     shotCollisionImageIndex : number
 } ;
 
+export enum PlaneKind {
+    USERPLANE = 0,
+    ENEMYPLANE = 1
+}
+
 enum ShotStatus {
     STOP = 0,
     ACTION = 1,
@@ -111,15 +116,13 @@ class Plane extends Obj {
         
         return { shotPositionX, shotPositionY }
     }
-
     public setLife( life : number ) {
         this.life = life ;
     }
-
-    public checkShotAction() {
+    public checkShotStatusAction() {
         return this.shotAction === ShotStatus.ACTION ;
     }
-    public checkShotStop() {
+    public checkShotStatusStop()  {
         return this.shotAction === ShotStatus.STOP ;
     }
     public shotActionMapping() {
@@ -215,5 +218,71 @@ class EnemyPlane extends Plane {
         this.direction.left = true ;
     }
 }
+
+class PlaneList {
+    protected enemyPlaneList : Plane[] = [] ;
+    protected userPlaneList : Plane[] = [] ;
+    private instance : PlaneList | null = null ;
+
+    constructor() {
+        return this.getInstance() ;
+    }
+
+    public getUserPlanes()              { return this.userPlaneList ; }
+    public getEnemyPlanes()             { return this.enemyPlaneList ; }
+
+    public getInstance() {
+        if( this.instance ) return this.instance ;
+
+        this.instance = this ;
+        return this.instance ;
+    }
+
+    public createPlane( 
+        id : number, 
+        wall : Wall,
+        positionX : number,
+        positionY : number,
+        planeData : PlaneData,
+        planeKind : PlaneKind
+    ) : Plane {
+
+        let plane ;
+
+        switch(planeKind) {
+            case PlaneKind.USERPLANE : 
+                plane = new UserPlane(id, wall, positionX, positionY, planeData) ;
+                this.registerPlane(plane, planeKind) ;
+                break ;
+            case PlaneKind.ENEMYPLANE :
+                plane = new EnemyPlane(id, wall, positionX, positionY, planeData) ;
+                this.registerPlane(plane, planeKind) ;
+                break ;
+        }
+
+        return plane ;
+    }
+
+    public registerPlane( plane : Plane, planeKind : PlaneKind ) : void {
+        switch(planeKind) {
+            case PlaneKind.USERPLANE : 
+                this.userPlaneList = this.userPlaneList.concat(plane) ;
+                break ;
+            case PlaneKind.ENEMYPLANE :
+                this.enemyPlaneList = this.enemyPlaneList.concat(plane) ;
+                break ;
+        }
+    }
+
+    public unregisterPlane() : void {
+        // User Plane
+        const notLifeUserPlane = this.userPlaneList.filter((plane : Plane) => ( plane.getLife() === 0 )) ;
+        this.userPlaneList = this.userPlaneList.filter((plane : Plane) => !notLifeUserPlane.includes(plane)) ;
+    
+        // Enemy Plane
+        const notLifeEnemyPlane = this.enemyPlaneList.filter((plane : Plane) => ( plane.getLife() === 0 )) ;
+        this.enemyPlaneList = this.enemyPlaneList.filter((plane : Plane) => !notLifeEnemyPlane.includes(plane)) ;
+    }
+}
   
-export { Plane, UserPlane, Direction, EnemyPlane } ;
+export { Plane, UserPlane, Direction, EnemyPlane, PlaneList } ;
