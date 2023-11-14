@@ -36,6 +36,7 @@ export default class Game {
     private gameStatus : GameStatus = GameStatus.START ;
 
     private planeList : PlaneList | null = null ;
+    private userLife : HTMLParagraphElement = document.createElement('p') ;
     
     constructor({
         title,
@@ -50,8 +51,7 @@ export default class Game {
 
         this.planeList = planeList ;
 
-        const p = document.createElement('p') ;
-        p.className = 'absolute' ;
+        this.userLife.className = 'absoulte' ;
     }
 
     public getTitle()           { return this.title ; }
@@ -83,6 +83,9 @@ export default class Game {
                 clearInterval(gameEndPid)
                 this.end() ;
             }
+
+            this.userLife.innerText = `${this.planeList?.getEnemyPlanes()[0].getLife()}` ;
+            
         }, 1000) ;
     }
 
