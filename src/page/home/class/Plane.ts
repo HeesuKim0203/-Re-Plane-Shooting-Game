@@ -1,66 +1,150 @@
 import Wall from './Wall'
-import { Shot } from './Shot'
-import { Obj, Direction } from './util'
-  
-export enum ShotStatus {
-    LOAD = 0,
+import { Obj, Direction, size } from './util'
+ 
+export type PlaneData = {
+    planeImageSrc : string
+    speed : number
+    life : number
+    size : size
+    shotSize : size
+    shotDamage : number
+    shootImgSrcList : string[]
+    shotDelay : number
+    shotSpeed : number
+    shotListNormalImageIndex : number
+    shotCollisionImageIndex : number
+} ;
+
+export enum PlaneKind {
+    USERPLANE = 0,
+    ENEMYPLANE = 1
+}
+
+enum ShotStatus {
+    STOP = 0,
     ACTION = 1,
-    STOP = 2
 }
 
 class Plane extends Obj {
+    // Plane Data
     private id : number = 0 ;
     private img : HTMLImageElement | null = null ;
     private shotAction : ShotStatus = ShotStatus.STOP ;
-    private shotDelay : number = 2000 ;
+    private shotDelay : number = 1000 ;
+    private shotMappingPid : number = 0 ;
+    private size : size = { width : 0, height : 0, expWidth : 0, expHeight : 0 } ;
+    private life : number = 0 ;
 
-    private shootImgList : HTMLImageElement[] | null = null ;
-    
+    // Shot Data
+    private shotImgList : HTMLImageElement[] | null = null ;
+    private shotSpeed : number = 0 ;
+    private shotListNormalImageIndex : number = 0 ;
+    private shotCollisionImageIndex : number = 0 ;
+    private shotDamage : number = 0 ;
+    private shotSize : size = { width : 0, height : 0, expWidth : 0, expHeight : 0 } ;
+
     constructor( 
         id : number, 
-        size : number, 
-        imgSrc : string, 
-        positionX : number, 
-        positionY : number, 
-        wall : Wall, 
-        speed : number, 
-        shootImgSrcList : string[],
-        shotDelay : number|undefined,
+        wall : Wall,
+        positionX : number,
+        positionY : number,
+        {
+            planeImageSrc,
+            size,
+            shotSize,
+            speed,
+            life,
+            shotDamage,
+            shootImgSrcList,
+            shotDelay,
+            shotSpeed,
+            shotListNormalImageIndex,
+            shotCollisionImageIndex,
+        } : PlaneData
     ) {
         
         super( positionX, positionY, wall, speed ) ;
 
         this.id = id ;
+        this.size = size ;
+        this.life = life ;
 
         this.img = new Image() ;
-        this.img.src = imgSrc ;
-        this.img.width = size ;
-        this.img.height = size ;
+        this.img.src = planeImageSrc ;
+        this.img.width = size.width ;
+        this.img.height = size.height ;
 
-        if( shotDelay ) this.shotDelay = shotDelay ;
+        this.shotDamage = shotDamage ;
+        this.shotDelay = shotDelay ;
+        this.shotSpeed = shotSpeed ;
+        this.shotListNormalImageIndex = shotListNormalImageIndex ;
+        this.shotCollisionImageIndex = shotCollisionImageIndex ;
+        this.shotSize = shotSize ;
 
-        this.shootImgList = shootImgSrcList.map(( src : string ) => {
+        this.shotImgList = shootImgSrcList.map(( src : string, index : number ) => {
             const img = new Image() ;
-            img.width = size ;
-            img.height = size ;
+            if( index >= this.shotCollisionImageIndex ) {
+                img.width = shotSize.expWidth ;
+                img.height = shotSize.expHeight ;
+            }else {
+                img.width = shotSize.width ;
+                img.height = shotSize.height ;
+            }
             img.src = src ;
             return img ;
         }) ;
     }
 
-    public getId()             { return this.id ; } 
-    public getImg()            { return this.img ; }
-    public getImgList()        { return this.shootImgList ; }
-    public getShotStatus()     { return this.shotAction ; }
-    public shotActionMapping() {
-        if( this.shotAction === ShotStatus.LOAD ) return ;
-        this.shotAction = ShotStatus.ACTION ;
+    public getId()                          { return this.id ; } 
+    public getImg()                         { return this.img ; }
+    public getImgList()                     { return this.shotImgList ; }
+    public getShotStatus()                  { return this.shotAction ; }
+    public getShotDelay()                   { return this.shotDelay ; }
+    public getShotMappingPid()              { return this.shotMappingPid ; }
+    public getSize()                        { return this.size ; }
+    public getShotSpeed()                   { return this.shotSpeed ; }
+    public getShotListNormalImageIndex()    { return this.shotListNormalImageIndex ; }
+    public getShotCollisionImageIndex()     { return this.shotCollisionImageIndex ; }
+    public getLife()                        { return this.life ; }
+    public getShotDamage()                  { return this.shotDamage ; }    
+    public getShotSize()                    { return this.shotSize ; }
+    public getShotPosition( direction : boolean ) {
+
+        let shotPositionX ;
+
+        const middle = this.size.width ;
+
+        if( direction ) shotPositionX = this.position.x + middle ;
+        else shotPositionX = this.position.x - middle ;
+
+        const shotPositionY = this.position.y + (this.size.height / 2) - (this.shotSize.height / 2) ; 
+        
+        return { shotPositionX, shotPositionY }
     }
-    public shotLoadMapping() {
-        this.shotAction =  ShotStatus.LOAD ; 
+    public setLife( life : number ) {
+        this.life = life ;
+    }
+    public checkShotStatusAction() {
+        return this.shotAction === ShotStatus.ACTION ;
+    }
+    public checkShotStatusStop()  {
+        return this.shotAction === ShotStatus.STOP ;
+    }
+    public shotActionMapping() {
+        this.shotAction = ShotStatus.ACTION ;
     }
     public shotStopMapping() {
         this.shotAction =  ShotStatus.STOP ; 
+    }
+    public shotMapping() {
+        this.shotMappingPid = window.setInterval(() => {
+            this.shotActionMapping() ;
+        }, this.getShotDelay()) ;
+    }
+    // We'll must have to run it before delete instance
+    public deleteShotMapping() {
+        clearInterval(this.shotMappingPid) ;
+        this.shotMappingPid = 0 ;
     }
 }
 
@@ -84,7 +168,10 @@ class UserPlane extends Plane {
                 this.direction.left = true ;
                 break ;
             case(' ') :
-                this.shotActionMapping() ;
+                if( !this.getShotMappingPid() ) {
+                    this.shotActionMapping() ;
+                    this.shotMapping() ;
+                }
                 break ;
             default : 
                 break ;
@@ -109,7 +196,7 @@ class UserPlane extends Plane {
                 this.direction.left = false ;
                 break ;
             case(' ') :
-                this.shotStopMapping() ;
+                this.deleteShotMapping() ;
                 break ;
             default : 
                 break ;
@@ -117,31 +204,90 @@ class UserPlane extends Plane {
     }
 }
 
-class Level1EnemyPlane extends Plane {
+class EnemyPlane extends Plane {
 
     constructor( 
         id : number, 
-        size : number, 
-        imgSrc : string, 
-        positionX : number, 
-        positionY : number, 
-        wall : Wall, 
-        speed : number, 
-        shootImgSrcList : string[],
-        shotDelay : number|undefined,
+        wall : Wall,
+        positionX : number,
+        positionY : number,
+        planeData : PlaneData
     ) {
-        super(id, size, imgSrc, positionX, positionY, wall, 3, shootImgSrcList, shotDelay) ;
+        super( id, wall,  positionX, positionY, planeData ) ;
+
         this.movementMapping() ;
+        this.shotMapping() ;
     }
 
     public movementMapping() {
         this.direction.left = true ;
     }
+}
 
-    public shotMapping() {
-        
+class PlaneList {
+    protected enemyPlaneList : Plane[] = [] ;
+    protected userPlaneList : Plane[] = [] ;
+    private instance : PlaneList | null = null ;
+
+    constructor() {
+        return this.getInstance() ;
     }
 
+    public getUserPlanes()              { return this.userPlaneList ; }
+    public getEnemyPlanes()             { return this.enemyPlaneList ; }
+
+    public getInstance() {
+        if( this.instance ) return this.instance ;
+
+        this.instance = this ;
+        return this.instance ;
+    }
+
+    public createPlane( 
+        id : number, 
+        wall : Wall,
+        positionX : number,
+        positionY : number,
+        planeData : PlaneData,
+        planeKind : PlaneKind
+    ) : Plane {
+
+        let plane ;
+
+        switch(planeKind) {
+            case PlaneKind.USERPLANE : 
+                plane = new UserPlane(id, wall, positionX, positionY, planeData) ;
+                this.registerPlane(plane, planeKind) ;
+                break ;
+            case PlaneKind.ENEMYPLANE :
+                plane = new EnemyPlane(id, wall, positionX, positionY, planeData) ;
+                this.registerPlane(plane, planeKind) ;
+                break ;
+        }
+
+        return plane ;
+    }
+
+    public registerPlane( plane : Plane, planeKind : PlaneKind ) : void {
+        switch(planeKind) {
+            case PlaneKind.USERPLANE : 
+                this.userPlaneList = this.userPlaneList.concat(plane) ;
+                break ;
+            case PlaneKind.ENEMYPLANE :
+                this.enemyPlaneList = this.enemyPlaneList.concat(plane) ;
+                break ;
+        }
+    }
+
+    public unregisterPlane() : void {
+        // User Plane
+        const notLifeUserPlane = this.userPlaneList.filter((plane : Plane) => ( plane.getLife() === 0 )) ;
+        this.userPlaneList = this.userPlaneList.filter((plane : Plane) => !notLifeUserPlane.includes(plane)) ;
+    
+        // Enemy Plane
+        const notLifeEnemyPlane = this.enemyPlaneList.filter((plane : Plane) => ( plane.getLife() === 0 )) ;
+        this.enemyPlaneList = this.enemyPlaneList.filter((plane : Plane) => !notLifeEnemyPlane.includes(plane)) ;
+    }
 }
   
-export { Plane, UserPlane, Direction, Level1EnemyPlane } ;
+export { Plane, UserPlane, Direction, EnemyPlane, PlaneList } ;

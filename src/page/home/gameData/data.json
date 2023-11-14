@@ -1,0 +1,6 @@
+{
+    "title" : "Plane Game",
+    "enemyPlaneList" : [
+        { "level" : 1, "num" : 60 }
+    ]
+}
