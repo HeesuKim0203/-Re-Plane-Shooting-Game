@@ -22,6 +22,8 @@ export enum Direction {
 export type size = {
     width : number
     height : number
+    expWidth : number
+    expHeight : number
 }
 
 export class Obj {

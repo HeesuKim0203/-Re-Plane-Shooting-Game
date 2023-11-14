@@ -7,8 +7,8 @@ const ENEMPLANE_START_POSITION_X = 1200 ;
 const ENEMPLANE_START_POSITION_Y_MIN = 0 ;
 const ENEMPLANE_START_POSITION_Y_MAX = 600 ;
 
-const ENEMPLANE_MIN_TIME = 5000 ;
-const ENEMPLANE_MAX_TIME = 25000 ;
+const ENEMPLANE_MIN_TIME = 500 ;
+const ENEMPLANE_MAX_TIME = 4000 ;
 
 type EnemyPlaneImformation = {
     level : number
@@ -60,6 +60,7 @@ export default class Game {
     
     public start() {
         let id = 0 ; 
+        let time = 0 ;
 
         this.enemyPlaneImformationList.forEach((enemyPlaneImportmation : EnemyPlaneImformation, index : number) => {
             for(let i = 0 ; i < enemyPlaneImportmation.num ; i++) {
@@ -67,7 +68,7 @@ export default class Game {
                 const planeData = this.enemyPlaneDataList[findIndex].planeDate ;
 
                 const y = Math.floor(Math.random() * (( ENEMPLANE_START_POSITION_Y_MAX - planeData.size.height ) - ENEMPLANE_START_POSITION_Y_MIN - 1)) + ENEMPLANE_START_POSITION_Y_MIN ;
-                const time = Math.floor(Math.random() * (ENEMPLANE_MAX_TIME - ENEMPLANE_MIN_TIME - 1)) + ENEMPLANE_MIN_TIME ;
+                time += Math.floor(Math.random() * (ENEMPLANE_MAX_TIME - ENEMPLANE_MIN_TIME - 1)) + ENEMPLANE_MIN_TIME ;
                 setTimeout(() => {
                     if(this.wall && this.planeList) {
                         this.planeList.createPlane(id, this.wall, ENEMPLANE_START_POSITION_X, y, planeData, PlaneKind.ENEMYPLANE) ;

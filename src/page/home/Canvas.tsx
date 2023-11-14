@@ -22,7 +22,7 @@ const Canvas = ( props : CanvasProps ) => {
     const height = props.height as number ;
 
     const wall = new Wall(0, 0, width, height) ;
-    const userPlane = new UserPlane(0, wall, 0, 0, userPlaneData) ;
+    const userPlane = new UserPlane(0, wall, 40, (height / 2) - (userPlaneData.size.height / 2), userPlaneData) ;
 
     const planeList = new PlaneList() ;
     planeList.registerPlane(userPlane, PlaneKind.USERPLANE) ;

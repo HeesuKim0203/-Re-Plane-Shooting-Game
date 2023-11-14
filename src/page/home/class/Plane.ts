@@ -32,7 +32,7 @@ class Plane extends Obj {
     private shotAction : ShotStatus = ShotStatus.STOP ;
     private shotDelay : number = 1000 ;
     private shotMappingPid : number = 0 ;
-    private size : size = { width : 0, height : 0 } ;
+    private size : size = { width : 0, height : 0, expWidth : 0, expHeight : 0 } ;
     private life : number = 0 ;
 
     // Shot Data
@@ -41,7 +41,7 @@ class Plane extends Obj {
     private shotListNormalImageIndex : number = 0 ;
     private shotCollisionImageIndex : number = 0 ;
     private shotDamage : number = 0 ;
-    private shotSize : size = { width : 0, height : 0 } ;
+    private shotSize : size = { width : 0, height : 0, expWidth : 0, expHeight : 0 } ;
 
     constructor( 
         id : number, 
@@ -81,10 +81,15 @@ class Plane extends Obj {
         this.shotCollisionImageIndex = shotCollisionImageIndex ;
         this.shotSize = shotSize ;
 
-        this.shotImgList = shootImgSrcList.map(( src : string ) => {
+        this.shotImgList = shootImgSrcList.map(( src : string, index : number ) => {
             const img = new Image() ;
-            img.width = shotSize.width ;
-            img.height = shotSize.height ;
+            if( index >= this.shotCollisionImageIndex ) {
+                img.width = shotSize.expWidth ;
+                img.height = shotSize.expHeight ;
+            }else {
+                img.width = shotSize.width ;
+                img.height = shotSize.height ;
+            }
             img.src = src ;
             return img ;
         }) ;
@@ -107,12 +112,12 @@ class Plane extends Obj {
 
         let shotPositionX ;
 
-        const middle = (this.size.height / 10) * 6  ;
+        const middle = this.size.width ;
 
         if( direction ) shotPositionX = this.position.x + middle ;
         else shotPositionX = this.position.x - middle ;
 
-        const shotPositionY = this.position.y + (this.size.height / 2) ; 
+        const shotPositionY = this.position.y + (this.size.height / 2) - (this.shotSize.height / 2) ; 
         
         return { shotPositionX, shotPositionY }
     }
