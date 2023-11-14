@@ -84,7 +84,7 @@ export default class Game {
                 this.end() ;
             }
 
-            this.userLife.innerText = `${this.planeList?.getEnemyPlanes()[0].getLife()}` ;
+            this.userLife.innerText = `${this.planeList?.getUserPlanes()[0].getLife()}` ;
             
         }, 1000) ;
     }
