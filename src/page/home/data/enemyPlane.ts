@@ -13,7 +13,7 @@ import shoot11Src from '../img/shot/enemyPlaneShot/shot5_exp6.png'
 import shoot12Src from '../img/shot/enemyPlaneShot/shot5_exp7.png'
 
 import level1EnemyPlaneSrc from '../img/planes/level1_enemy_planes.png'
-import { PlaneData } from '../class/Plane'
+import { PlaneData, PlaneKind } from '../class/Plane'
 
 export type EnemyPlanLevelData = {
     level : number
@@ -24,14 +24,21 @@ const enemyPlaneList : EnemyPlanLevelData[] = [
     {
         level : 1,
         planeDate : {
+            planKind : PlaneKind.ENEMYPLANE,
+            planeBeforImageSrc : [],
             planeImageSrc : level1EnemyPlaneSrc,
+            planeExpImageSrc : [],
             size : {
+                beforWidth : 0,
+                beforHeight : 0,
                 width : 105,
                 height : 82,
                 expWidth : 0,
                 expHeight : 0
             },
             shotSize : {
+                beforWidth : 0,
+                beforHeight : 0,
                 width : 46,
                 height : 11,
                 expWidth : 74,
@@ -40,24 +47,24 @@ const enemyPlaneList : EnemyPlanLevelData[] = [
             speed : 1,
             life : 2,
             shotDamage : 1 ,
-            shootImgSrcList : [
+            shotBeforImageSrcList : [
                 shoot1Src,
                 shoot2Src,
                 shoot3Src,
                 shoot4Src,
-                shoot5Src,
+            ],
+            shotImage : shoot5Src,
+            shotExpImageSrcList : [
                 shoot6Src,
                 shoot7Src,
                 shoot8Src,
                 shoot9Src,
                 shoot10Src,
                 shoot11Src,
-                shoot12Src
+                shoot12Src,
             ],
             shotDelay : 2000,
             shotSpeed : 8,
-            shotListNormalImageIndex : 4,
-            shotCollisionImageIndex : 6
         }
     }
 ] ;

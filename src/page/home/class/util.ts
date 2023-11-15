@@ -20,6 +20,8 @@ export enum Direction {
 }
 
 export type size = {
+    beforWidth : number
+    beforHeight : number
     width : number
     height : number
     expWidth : number
@@ -27,10 +29,10 @@ export type size = {
 }
 
 export class Obj {
-    wall : Wall | null = null ;
-    direction : Move = { down : false, up : false, left : false, right : false } ;
-    position : Position = { x : 0, y : 0 } ;
-    speed : number = 0 ;
+    protected wall : Wall | null = null ;
+    protected direction : Move = { down : false, up : false, left : false, right : false } ;
+    protected position : Position = { x : 0, y : 0 } ;
+    protected speed : number = 0 ;
 
     constructor( positionX : number, positionY : number, wall : Wall, speed : number ) {
         this.position.x = positionX ;
@@ -39,6 +41,8 @@ export class Obj {
         this.wall = wall ;
         this.speed = speed ;
     }
+
+    public getWall() { return this.wall ; }
 
     public move() {
         try {

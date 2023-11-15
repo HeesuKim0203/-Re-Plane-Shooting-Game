@@ -1,4 +1,4 @@
-import { PlaneData } from '../class/Plane'
+import { PlaneData, PlaneKind } from '../class/Plane'
 
 import shoot1Src from '../img/shot/userPlaneShot/shot2_1.png'
 import shoot2Src from '../img/shot/userPlaneShot/shot2_2.png'
@@ -17,14 +17,21 @@ import shoot12Src from '../img/shot/userPlaneShot/shot2_exp5.png'
 import userPlaneSrc from '../img/planes/user_airplane.png'
 
 const userPlaneData : PlaneData = {
+    planKind : PlaneKind.USERPLANE,
+    planeBeforImageSrc : [],
     planeImageSrc : userPlaneSrc,
+    planeExpImageSrc : [],
     size : {
+        beforWidth : 0,
+        beforHeight : 0,
         width : 77,
         height : 34, 
         expWidth : 0,
         expHeight : 0
     },
     shotSize : {
+        beforWidth : 0,
+        beforHeight : 0,
         width : 25,
         height : 21,
         expWidth : 64,
@@ -33,14 +40,16 @@ const userPlaneData : PlaneData = {
     speed : 5,
     life : 10,
     shotDamage : 1,
-    shootImgSrcList : [
+    shotBeforImageSrcList : [
         shoot1Src,
         shoot2Src,
         shoot3Src,
         shoot4Src,
         shoot5Src,
         shoot6Src,
-        shoot7Src,
+    ],
+    shotImage: shoot7Src,
+    shotExpImageSrcList : [
         shoot8Src,
         shoot9Src,
         shoot10Src,
@@ -49,8 +58,6 @@ const userPlaneData : PlaneData = {
     ],
     shotDelay : 200,
     shotSpeed : 10,
-    shotListNormalImageIndex : 6,
-    shotCollisionImageIndex : 8
 } ;
 
 export default userPlaneData ;

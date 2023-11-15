@@ -9,13 +9,16 @@ enum ShotStatus {
 }
 
 export class Shot extends Obj {
-    protected imgList : HTMLImageElement[] | null = null ;
+    private shotBeforImageList : HTMLImageElement[] = [] ;
+    private shotImg : HTMLImageElement = new Image() ;
+    private shotExpImageList : HTMLImageElement[] = [] ;
+
     private state : ShotStatus = 0 ;
     private currentIndex : number = 0 ;
     private normalImageIndex : number = 0 ;
     private collisionImageIndex : number = 0 ;
     private damage : number = 0 ;
-    private size : size = { width : 0, height : 0, expWidth : 0, expHeight : 0 } ;
+    private size : size = {  beforWidth : 0, beforHeight : 0, width : 0, height : 0, expWidth : 0, expHeight : 0 } ;
 
     constructor(
         positionX : number, 
@@ -23,20 +26,20 @@ export class Shot extends Obj {
         wall : Wall, 
         size : size,
         speed : number, 
-        normalImageIndex : number,
-        collisionImageIndex : number,
         direction : boolean, 
-        imgList : HTMLImageElement[],
+        shotBeforImageList : HTMLImageElement[],
+        shotImg : HTMLImageElement,
+        shotExpImageList : HTMLImageElement[],
         damage : number
     ) {
         super( positionX, positionY, wall, speed ) ;
 
-        this.normalImageIndex = normalImageIndex ;
-        this.collisionImageIndex = collisionImageIndex ;
-
-        this.imgList = imgList ;
         this.damage = damage ;
         this.size = size ;
+
+        this.shotBeforImageList = shotBeforImageList ;
+        this.shotImg = shotImg ;
+        this.shotExpImageList = shotExpImageList ;
 
         if( direction ) {
             this.direction.right = true ; // User Plane Shot
@@ -49,7 +52,7 @@ export class Shot extends Obj {
     public getNormalImageIndex()                    { return this.normalImageIndex ; }
     public getCollisionImageIndex()                 { return this.collisionImageIndex ; }
     public getState()                               { return this.state ; }
-    public getImgList()                             { return this.imgList ; }
+    // public getImgList()                             { return this.imgList ; }
     public getDirection()                           { return this.direction ; }
     public getDamage()                              { return this.damage ; }
     public getSize()                                { return this.size ; }
@@ -59,27 +62,27 @@ export class Shot extends Obj {
     }
 
     public setStateToCollison() { this.state = ShotStatus.COLLISION ; }
-    public deleteDetermining()  { 
-        if( this.imgList ) {
-            return this.imgList?.length === this.currentIndex ;
-        }
-    }
+    // public deleteDetermining()  { 
+    //     if( this.imgList ) {
+    //         return this.imgList?.length === this.currentIndex ;
+    //     }
+    // }
 
     public move() {
 
-        // Before shooting a shot
-        if( this.getNormalImageIndex() > this.currentIndex ) {
-            this.setCurrentIndex(this.currentIndex + 1) ;
-            return ;
-        }
+        // // Before shooting a shot
+        // if( this.getNormalImageIndex() > this.currentIndex ) {
+        //     this.setCurrentIndex(this.currentIndex + 1) ;
+        //     return ;
+        // }
 
-        // Exp Draw
-        if( this.getState() === ShotStatus.COLLISION && this.imgList ) {
-            if( this.imgList?.length > this.currentIndex ) {
-                this.setCurrentIndex(this.currentIndex + 1) ;
-                return ;
-            }
-        }
+        // // Exp Draw
+        // if( this.getState() === ShotStatus.COLLISION && this.imgList ) {
+        //     if( this.imgList?.length > this.currentIndex ) {
+        //         this.setCurrentIndex(this.currentIndex + 1) ;
+        //         return ;
+        //     }
+        // }
 
         try {
             if( this.wall ) {
@@ -131,10 +134,10 @@ export class ShotList {
         wall : Wall, 
         size : size,
         speed : number, 
-        normalImageIndex : number,
-        collisionImageIndex : number,
         direction : boolean, 
-        imgList : HTMLImageElement[],
+        shotBeforImageList : HTMLImageElement[],
+        shotImg : HTMLImageElement,
+        shotExpImageList : HTMLImageElement[],
         damage : number
     ) {
 
@@ -144,62 +147,62 @@ export class ShotList {
             wall,
             size,
             speed,
-            normalImageIndex,
-            collisionImageIndex,
             direction,
-            imgList,
+            shotBeforImageList,
+            shotImg,
+            shotExpImageList,
             damage
         ) ;
  
         this.shotList = this.shotList.concat(shot) ;
     }
 
-    public shotToDamagePlane( user : boolean, ...plane : Plane[] ) {
+    // public shotToDamagePlane( user : boolean, ...plane : Plane[] ) {
 
-        if( user ) { // UserPlane
-            const shotList = this.shotList.filter(( shot : Shot ) => ( shot.getDirection().left === true )) ; // Enemy Shot
+    //     if( user ) { // UserPlane
+    //         const shotList = this.shotList.filter(( shot : Shot ) => ( shot.getDirection().left === true )) ; // Enemy Shot
 
-            shotList.forEach(( shot : Shot ) => {
+    //         shotList.forEach(( shot : Shot ) => {
 
-                if( shot.getState() === ShotStatus.COLLISION ) return ;
+    //             if( shot.getState() === ShotStatus.COLLISION ) return ;
 
-                plane.forEach(( plane : Plane ) => {
-                    if( plane.position.y < shot.position.y + shot.getSize().height && plane.position.y + plane.getSize().height > shot.position.y ) {
-                        if( plane.position.x + plane.getSize().width >= shot.position.x && plane.position.x < shot.position.x + shot.getSize().width ) {
-                            plane.setLife(plane.getLife() - shot.getDamage()) ;
-                            shot.setStateToCollison() ;
-                        }
-                    }
-                }) ;
-            }) ;
+    //             plane.forEach(( plane : Plane ) => {
+    //                 if( plane.position.y < shot.position.y + shot.getSize().height && plane.position.y + plane.getSize().height > shot.position.y ) {
+    //                     if( plane.position.x + plane.getSize().width >= shot.position.x && plane.position.x < shot.position.x + shot.getSize().width ) {
+    //                         plane.setLife(plane.getLife() - shot.getDamage()) ;
+    //                         shot.setStateToCollison() ;
+    //                     }
+    //                 }
+    //             }) ;
+    //         }) ;
 
-        }else {  // enemyPlane
-            const shotList = this.shotList.filter(( shot : Shot ) => ( shot.getDirection().left === false )) ; // User Shot
+    //     }else {  // enemyPlane
+    //         const shotList = this.shotList.filter(( shot : Shot ) => ( shot.getDirection().left === false )) ; // User Shot
 
-            shotList.forEach(( shot : Shot ) => {
+    //         shotList.forEach(( shot : Shot ) => {
 
-                if( shot.getState() === ShotStatus.COLLISION ) return ;
+    //             if( shot.getState() === ShotStatus.COLLISION ) return ;
 
-                plane.forEach(( plane : Plane ) => {
-                    if( plane.position.y < shot.position.y + shot.getSize().height && plane.position.y + plane.getSize().height > shot.position.y ) {
-                        if( plane.position.x <= shot.position.x ) {
-                            plane.setLife(plane.getLife() - shot.getDamage()) ;
-                            shot.setStateToCollison() ;
-                        }
-                    }
-                }) ;
-            }) ;
-        }
-    }
+    //             plane.forEach(( plane : Plane ) => {
+    //                 if( plane.position.y < shot.position.y + shot.getSize().height && plane.position.y + plane.getSize().height > shot.position.y ) {
+    //                     if( plane.position.x <= shot.position.x ) {
+    //                         plane.setLife(plane.getLife() - shot.getDamage()) ;
+    //                         shot.setStateToCollison() ;
+    //                     }
+    //                 }
+    //             }) ;
+    //         }) ;
+    //     }
+    // }
 
-    public deleteShot() {
-        const newShotList = this.shotList.filter(( shot : Shot ) => (!shot.deleteDetermining() && !(shot.getState() === ShotStatus.END))) ;
-        if( newShotList ) this.shotList = newShotList ;
-    }
+    // // public deleteShot() {
+    // //     const newShotList = this.shotList.filter(( shot : Shot ) => (!shot.deleteDetermining() && !(shot.getState() === ShotStatus.END))) ;
+    // //     if( newShotList ) this.shotList = newShotList ;
+    // // }
 
-    public shotMove() {
-        this.shotList.forEach((shot : Shot) => {
-            shot.move() ;
-        }) ;
-    }
+    // public shotMove() {
+    //     this.shotList.forEach((shot : Shot) => {
+    //         shot.move() ;
+    //     }) ;
+    // }
 }
