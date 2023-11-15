@@ -23,13 +23,13 @@ export type PlaneData = {
     shotSpeed : number
 } ;
 
-enum PlaneStatus {
+enum ObjStatus {
     BEFOR = 0,
     NORMAL = 1,
     EXP = 2
 }
 
-enum ShotStatus {
+enum PlaneActionShotStatus {
     STOP = 0,
     ACTION = 1,
 }
@@ -37,12 +37,12 @@ enum ShotStatus {
 class Plane extends Obj {
     // Plane Data
     private id : number = 0 ;
-
+    private planKind : PlaneKind | undefined = undefined ;
     private planeBeforImageList : HTMLImageElement[] = [] ;
     private img : HTMLImageElement = new Image() ;
     private planeExpImageList : HTMLImageElement[] = [] ;
 
-    private shotAction : ShotStatus = ShotStatus.STOP ;
+    private shotAction : PlaneActionShotStatus = PlaneActionShotStatus.STOP ;
     private shotDelay : number = 1000 ;
     private shotMappingPid : number = 0 ;
     private size : size = { beforWidth : 0, beforHeight : 0, width : 0, height : 0, expWidth : 0, expHeight : 0 } ;
@@ -83,6 +83,7 @@ class Plane extends Obj {
         super( positionX, positionY, wall, speed ) ;
 
         this.id = id ;
+        this.planKind = planKind ;
         this.size = size ;
         this.life = life ;
 
@@ -125,7 +126,7 @@ class Plane extends Obj {
     public getPlaneExpImageList()           { return this.planeExpImageList ; }
     public getSize()                        { return this.size ; }
     public getLife()                        { return this.life ; }
-    public getPlaneKind()                   {}
+    public getPlaneKind()                   { return this.planKind ; }
     public setLife( life : number )         { this.life = life ; }
 
     // Shot Imformation get method
@@ -138,18 +139,18 @@ class Plane extends Obj {
     public getShotSpeed()                   { return this.shotSpeed ; }
     public getShotDamage()                  { return this.shotDamage ; }    
     public getShotSize()                    { return this.shotSize ; }
-    public getShotPosition( direction : boolean ) { // Todo :  User? Enemy?
+    public getShotPosition() { // Todo :  User? Enemy?
         let shotPositionX ;
-        if( direction ) shotPositionX = this.position.x + this.size.width ;
+        if( this.planKind === PlaneKind.USERPLANE ) shotPositionX = this.position.x + this.size.width ;
         else shotPositionX = this.position.x - this.size.width ;
         return { shotPositionX, shotPositionY :  this.position.y + (this.size.height / 2) - (this.shotSize.height / 2) }
     }
 
     // Plane shooting shot method
-    public checkShotStatusAction()  { return this.shotAction === ShotStatus.ACTION ; }
-    public checkShotStatusStop()    { return this.shotAction === ShotStatus.STOP ; }
-    public shotActionMapping()      { this.shotAction = ShotStatus.ACTION ; }
-    public shotStopMapping()        { this.shotAction =  ShotStatus.STOP ; }
+    public checkShotStatusAction()  { return this.shotAction === PlaneActionShotStatus.ACTION ; }
+    public checkShotStatusStop()    { return this.shotAction === PlaneActionShotStatus.STOP ; }
+    public shotActionMapping()      { this.shotAction = PlaneActionShotStatus.ACTION ; }
+    public shotStopMapping()        { this.shotAction =  PlaneActionShotStatus.STOP ; }
     public shotMapping() {
         this.shotMappingPid = window.setInterval(() => {
             this.shotActionMapping() ;

@@ -2,21 +2,24 @@ import { Plane } from './Plane';
 import Wall from './Wall'
 import { Obj, size } from './util'
 
-enum ShotStatus {
-    NORAML = 0,
-    COLLISION = 1,
-    END = 2
+enum ObjStatus {
+    BEFOR = 0,
+    NORMAL = 1,
+    EXP = 2,
+    COLLISION = 3 
 }
 
 export class Shot extends Obj {
-    private shotBeforImageList : HTMLImageElement[] = [] ;
-    private shotImg : HTMLImageElement = new Image() ;
-    private shotExpImageList : HTMLImageElement[] = [] ;
+    protected shotBeforImageList : HTMLImageElement[] = [] ;
+    protected shotBeforImageListIndex : number = 0 ;
 
-    private state : ShotStatus = 0 ;
-    private currentIndex : number = 0 ;
-    private normalImageIndex : number = 0 ;
-    private collisionImageIndex : number = 0 ;
+    protected shotImg : HTMLImageElement = new Image() ;
+
+    protected shotExpImageList : HTMLImageElement[] = [] ;
+    protected shotExpImageListIndex : number = 0 ;
+
+    protected shotStatus : ObjStatus = ObjStatus.BEFOR ;
+
     private damage : number = 0 ;
     private size : size = {  beforWidth : 0, beforHeight : 0, width : 0, height : 0, expWidth : 0, expHeight : 0 } ;
 
@@ -48,20 +51,30 @@ export class Shot extends Obj {
         }
     }
 
-    public getCurrentIndex()                        { return this.currentIndex ; }
-    public getNormalImageIndex()                    { return this.normalImageIndex ; }
-    public getCollisionImageIndex()                 { return this.collisionImageIndex ; }
-    public getState()                               { return this.state ; }
-    // public getImgList()                             { return this.imgList ; }
+    public getState()                               { return this.shotStatus ; }
     public getDirection()                           { return this.direction ; }
     public getDamage()                              { return this.damage ; }
     public getSize()                                { return this.size ; }
 
-    public setCurrentIndex( currentIndex : number ) { 
-        this.currentIndex = currentIndex ; 
+    public getImg() {
+        if( this.shotStatus === ObjStatus.BEFOR ) {
+            if( this.shotBeforImageListIndex ===  this.shotBeforImageList.length )
+
+            return this.shotBeforImageList[this.shotBeforImageListIndex++] ;
+        }else if( this.shotStatus === ObjStatus.NORMAL ) {
+            return this.shotImg ;
+        }else if( this.shotStatus === ObjStatus.EXP ) {
+            return this.shotExpImageList[this.shotExpImageListIndex++] ;
+        }else if( this.shotStatus === ObjStatus.COLLISION ) {
+
+        }
     }
 
-    public setStateToCollison() { this.state = ShotStatus.COLLISION ; }
+    // public setCurrentIndex( currentIndex : number ) { 
+    //     this.currentIndex = currentIndex ; 
+    // }
+
+    // public setStateToCollison() { this.state = ObjStatus.COLLISION ; }
     // public deleteDetermining()  { 
     //     if( this.imgList ) {
     //         return this.imgList?.length === this.currentIndex ;
@@ -90,14 +103,14 @@ export class Shot extends Obj {
                     if ( this.wall?.getLeft() < this.position.x - this.speed ) {
                         this.position.x -= this.speed ;
                     }else {
-                        this.state = ShotStatus.END ;
+                        this.shotStatus = ObjStatus.COLLISION ;
                     }
                 }
                 if( this.direction.right ) {
                     if ( this.wall?.getRight() > this.position.x + this.speed ) {
                         this.position.x += this.speed ;
                     }else {
-                        this.state = ShotStatus.END ;
+                        this.shotStatus = ObjStatus.COLLISION ;
                     }
                 }
             }else {
@@ -117,8 +130,8 @@ export class ShotList {
 
     constructor() {}
 
-    public getNormalShotState()    { return ShotStatus.NORAML ; }
-    public getCollisonShotState()  { return ShotStatus.COLLISION ; }
+    // public getNormalShotState()    { return ShotStatus.NORAML ; }
+    // public getCollisonShotState()  { return ShotStatus.COLLISION ; }
     public getShots()              { return this.shotList ; }
     
     public getInstance() {

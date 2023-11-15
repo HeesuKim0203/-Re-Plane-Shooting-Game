@@ -78,9 +78,7 @@ class Painter {
             const shotBeforImageList = plane.getShotBeforImageList() ;
             const shotExpImageList   = plane.getShotExpImageList() ;
 
-            const { shotPositionX, shotPositionY } = plane.getShotPosition(userPlane) ;
-
-            console.log(typeof plane == typeof UserPlane)
+            const { shotPositionX, shotPositionY } = plane.getShotPosition() ;
 
             this.shotList.createShot(
                 shotPositionX,
@@ -88,11 +86,10 @@ class Painter {
                 wall,
                 plane.getShotSize(),
                 plane.getShotSpeed(),
-                typeof plane == typeof UserPlane,
-                plane.getShotListNormalImageIndex(),
-                plane.getShotCollisionImageIndex(),
-                typeof(plane) === ,
-                shotImgList,
+                plane.getPlaneKind() ? true : false,
+                shotBeforImageList,
+                shotImg,
+                shotExpImageList,
                 plane.getShotDamage()
             ) ;
 
