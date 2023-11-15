@@ -32,13 +32,13 @@ class Painter {
         if( this.planeList ) {
             // Draw User Plane
             const userPlaneList = this.planeList.getUserPlanes() ;
-            this.shotList.shotToDamagePlane(true, ...userPlaneList) ;
             userPlaneList.forEach((plane : Plane) => this.drawPlane(plane, true)) ;
 
             // Draw Planes
             const enemyPlaneList = this.planeList.getEnemyPlanes() ;
-            this.shotList.shotToDamagePlane(false, ...enemyPlaneList) ;
             enemyPlaneList.forEach((plane : Plane) => this.drawPlane(plane, false)) ;
+
+            this.shotList.shotToDamagePlane(userPlaneList, enemyPlaneList) ;
         }
 
         // Shots Move
@@ -49,7 +49,7 @@ class Painter {
             if( imgList ) {
                 const image  = imgList[shot.getCurrentIndex()] ;
                 const { x, y } = shot.position ;
-                this.ctx?.drawImage(imgList[shot.getCurrentIndex()], x, y, image.width, image.height) ;
+                this.ctx?.drawImage(image, x, y, image.width, image.height) ;
             }
         }) ;
         this.shotList.shotMove() ;

@@ -10,7 +10,7 @@ enum ShotStatus {
 
 export class Shot extends Obj {
     protected imgList : HTMLImageElement[] | null = null ;
-    private state : ShotStatus = 0 ;
+    private state : ShotStatus = ShotStatus.NORAML ;
     private currentIndex : number = 0 ;
     private normalImageIndex : number = 0 ;
     private collisionImageIndex : number = 0 ;
@@ -55,7 +55,7 @@ export class Shot extends Obj {
     public getSize()                                { return this.size ; }
 
     public setCurrentIndex( currentIndex : number ) { 
-        this.currentIndex = currentIndex ; 
+        return this.currentIndex = currentIndex ; 
     }
 
     public setStateToCollison() { this.state = ShotStatus.COLLISION ; }
@@ -72,17 +72,18 @@ export class Shot extends Obj {
             this.setCurrentIndex(this.currentIndex + 1) ;
             return ;
         }
-
         // Exp Draw
         if( this.getState() === ShotStatus.COLLISION && this.imgList ) {
-            if( this.imgList?.length > this.currentIndex ) {
+            if( this.imgList?.length - 1 > this.currentIndex ) {
                 this.setCurrentIndex(this.currentIndex + 1) ;
                 return ;
+            }else {
+                this.state = ShotStatus.END ; // EXP -> END
             }
         }
 
         try {
-            if( this.wall ) {
+            if( this.wall && this.getState() === ShotStatus.NORAML ) {
                 if( this.direction.left ) {
                     if ( this.wall?.getLeft() < this.position.x - this.speed ) {
                         this.position.x -= this.speed ;
@@ -97,8 +98,6 @@ export class Shot extends Obj {
                         this.state = ShotStatus.END ;
                     }
                 }
-            }else {
-                throw new Error("Not Found wall") ;
             }
         } catch (error) {
             
@@ -154,46 +153,36 @@ export class ShotList {
         this.shotList = this.shotList.concat(shot) ;
     }
 
-    public shotToDamagePlane( user : boolean, ...plane : Plane[] ) {
+    public shotToDamagePlane( userPlanes : Plane[], enemyPlane : Plane[] ) {
 
-        if( user ) { // UserPlane
-            const shotList = this.shotList.filter(( shot : Shot ) => ( shot.getDirection().left === true )) ; // Enemy Shot
+        const enemyShotList = this.shotList.filter(( shot : Shot ) => ( shot.getDirection().left === true ) && shot.getState() === ShotStatus.NORAML) ; // Enemy Shot
+        const userShotList = this.shotList.filter(( shot : Shot ) => ( shot.getDirection().left === false ) && shot.getState() === ShotStatus.NORAML) ; // User Shot
 
-            shotList.forEach(( shot : Shot ) => {
-
-                if( shot.getState() === ShotStatus.COLLISION ) return ;
-
-                plane.forEach(( plane : Plane ) => {
-                    if( plane.position.y < shot.position.y + shot.getSize().height && plane.position.y + plane.getSize().height > shot.position.y ) {
-                        if( plane.position.x + plane.getSize().width >= shot.position.x && plane.position.x < shot.position.x + shot.getSize().width ) {
-                            plane.setLife(plane.getLife() - shot.getDamage()) ;
-                            shot.setStateToCollison() ;
-                        }
+        enemyShotList.forEach(( shot : Shot ) => {
+            userPlanes.forEach(( plane : Plane ) => {
+                if( plane.position.y < shot.position.y + shot.getSize().height && plane.position.y + plane.getSize().height > shot.position.y ) {
+                    if( plane.position.x + plane.getSize().width >= shot.position.x && plane.position.x < shot.position.x + shot.getSize().width ) {
+                        plane.setLife(plane.getLife() - shot.getDamage()) ;
+                        shot.setStateToCollison() ;
                     }
-                }) ;
+                }
             }) ;
+        }) ;
 
-        }else {  // enemyPlane
-            const shotList = this.shotList.filter(( shot : Shot ) => ( shot.getDirection().left === false )) ; // User Shot
-
-            shotList.forEach(( shot : Shot ) => {
-
-                if( shot.getState() === ShotStatus.COLLISION ) return ;
-
-                plane.forEach(( plane : Plane ) => {
-                    if( plane.position.y < shot.position.y + shot.getSize().height && plane.position.y + plane.getSize().height > shot.position.y ) {
-                        if( plane.position.x <= shot.position.x ) {
-                            plane.setLife(plane.getLife() - shot.getDamage()) ;
-                            shot.setStateToCollison() ;
-                        }
+        userShotList.forEach(( shot : Shot ) => {
+            enemyPlane.forEach(( plane : Plane ) => {
+                if( plane.position.y < shot.position.y + shot.getSize().height && plane.position.y + plane.getSize().height > shot.position.y ) {
+                    if( plane.position.x <= shot.position.x ) {
+                        plane.setLife(plane.getLife() - shot.getDamage()) ;
+                        shot.setStateToCollison() ;
                     }
-                }) ;
+                }
             }) ;
-        }
+        }) ;
     }
 
     public deleteShot() {
-        const newShotList = this.shotList.filter(( shot : Shot ) => (!shot.deleteDetermining() && !(shot.getState() === ShotStatus.END))) ;
+        const newShotList = this.shotList.filter(( shot : Shot ) => !(shot.getState() === ShotStatus.END)) ;
         if( newShotList ) this.shotList = newShotList ;
     }
 
