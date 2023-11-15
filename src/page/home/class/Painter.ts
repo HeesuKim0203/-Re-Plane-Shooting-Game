@@ -1,5 +1,6 @@
 import { Plane, PlaneList } from './Plane'
 import { Shot, ShotList } from './Shot' ;
+import Wall from './Wall';
 
 class Painter {
     private canvas : HTMLCanvasElement ;
@@ -7,14 +8,16 @@ class Painter {
 
     private backgroundSrc : string = "" ;
     private planeList : PlaneList | null = null ;
+    private wall : Wall | null = null ;
 
     private shotList : ShotList = new ShotList() ;
 
-    constructor( canvas : HTMLCanvasElement, backgroundSrc : string, planeList : PlaneList ) {
+    constructor( canvas : HTMLCanvasElement, backgroundSrc : string, planeList : PlaneList, wall : Wall ) {
         this.canvas = canvas ; 
         this.ctx = this.canvas.getContext('2d') ;
         this.backgroundSrc = backgroundSrc ;
         this.planeList = planeList ;
+        this.wall = wall ;
     }
 
     public initBackground() : void {
@@ -69,7 +72,7 @@ class Painter {
     }
 
     public drawShotAndLogic( plane : Plane, userPlane : boolean ) {
-        if( plane.checkShotStatusAction() && plane.wall ) {
+        if( plane.checkShotStatusAction() && this.wall ) {
 
             const shotImgList = plane.getImgList() ;
 
@@ -79,7 +82,7 @@ class Painter {
                 this.shotList.createShot(
                     shotPositionX,
                     shotPositionY,
-                    plane.wall,
+                    this.wall,
                     plane.getShotSize(),
                     plane.getShotSpeed(),
                     plane.getShotListNormalImageIndex(),

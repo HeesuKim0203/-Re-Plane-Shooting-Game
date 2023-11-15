@@ -1,6 +1,6 @@
 import { EnemyPlanLevelData } from "../data/enemyPlane";
 import Painter from "./Painter";
-import { PlaneList, PlaneKind } from "./Plane"
+import { PlaneList, PlaneKind, UserPlane } from "./Plane"
 import Wall from "./Wall"
 
 const ENEMPLANE_START_POSITION_X = 1200 ;
@@ -8,7 +8,7 @@ const ENEMPLANE_START_POSITION_Y_MIN = 0 ;
 const ENEMPLANE_START_POSITION_Y_MAX = 600 ;
 
 const ENEMPLANE_MIN_TIME = 500 ;
-const ENEMPLANE_MAX_TIME = 4000 ;
+const ENEMPLANE_MAX_TIME = 3000 ;
 
 type EnemyPlaneImformation = {
     level : number
@@ -36,7 +36,6 @@ export default class Game {
     private gameStatus : GameStatus = GameStatus.START ;
 
     private planeList : PlaneList | null = null ;
-    private userLife : HTMLParagraphElement = document.createElement('p') ;
     
     constructor({
         title,
@@ -50,8 +49,6 @@ export default class Game {
         this.enemyPlaneDataList = enemyPlaneDataList ;
 
         this.planeList = planeList ;
-
-        this.userLife.className = 'absoulte' ;
     }
 
     public getTitle()           { return this.title ; }
@@ -77,17 +74,6 @@ export default class Game {
                 id ++;
             }
         }) ;
-
-        // Todo : Game End fg setting
-        const gameEndPid = setInterval(() => {
-            if( this.planeList?.getEnemyPlanes().length === 0 ) { 
-                clearInterval(gameEndPid)
-                this.end() ;
-            }
-
-            this.userLife.innerText = `${this.planeList?.getUserPlanes()[0].getLife()}` ;
-            
-        }, 1000) ;
     }
 
     // Game Clear

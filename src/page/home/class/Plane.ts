@@ -150,6 +150,11 @@ class Plane extends Obj {
 
 class UserPlane extends Plane {
 
+    public userLifeToHTML() {
+        const userLife = document.getElementsByClassName('userLife')[0] as HTMLParagraphElement ;
+        userLife.innerText = `Life : ${this.getLife()}` ;
+    }
+
     public keyDownToMoveMapping( event : KeyboardEvent ) : void {
 
         event.preventDefault() ;
@@ -226,7 +231,7 @@ class EnemyPlane extends Plane {
 
 class PlaneList {
     protected enemyPlaneList : Plane[] = [] ;
-    protected userPlaneList : Plane[] = [] ;
+    protected userPlaneList : UserPlane[] = [] ;
     private instance : PlaneList | null = null ;
 
     constructor() {
@@ -257,32 +262,29 @@ class PlaneList {
         switch(planeKind) {
             case PlaneKind.USERPLANE : 
                 plane = new UserPlane(id, wall, positionX, positionY, planeData) ;
-                this.registerPlane(plane, planeKind) ;
+                this.registerUserPlane(plane) ;
                 break ;
             case PlaneKind.ENEMYPLANE :
                 plane = new EnemyPlane(id, wall, positionX, positionY, planeData) ;
-                this.registerPlane(plane, planeKind) ;
+                this.registerEnemyPlane(plane) ;
                 break ;
         }
 
         return plane ;
     }
 
-    public registerPlane( plane : Plane, planeKind : PlaneKind ) : void {
-        switch(planeKind) {
-            case PlaneKind.USERPLANE : 
-                this.userPlaneList = this.userPlaneList.concat(plane) ;
-                break ;
-            case PlaneKind.ENEMYPLANE :
-                this.enemyPlaneList = this.enemyPlaneList.concat(plane) ;
-                break ;
-        }
+    public registerUserPlane( plane : UserPlane ) {
+        this.userPlaneList = this.userPlaneList.concat(plane) ;
+    }
+
+    public registerEnemyPlane( plane : EnemyPlane ) {
+        this.enemyPlaneList = this.enemyPlaneList.concat(plane) ;
     }
 
     public unregisterPlane() : void {
         // User Plane
-        const notLifeUserPlane = this.userPlaneList.filter((plane : Plane) => ( plane.getLife() === 0 )) ;
-        this.userPlaneList = this.userPlaneList.filter((plane : Plane) => !notLifeUserPlane.includes(plane)) ;
+        const notLifeUserPlane = this.userPlaneList.filter((plane : UserPlane) => ( plane.getLife() === 0 )) ;
+        this.userPlaneList = this.userPlaneList.filter((plane : UserPlane) => !notLifeUserPlane.includes(plane)) ;
     
         // Enemy Plane
         const notLifeEnemyPlane = this.enemyPlaneList.filter((plane : Plane) => ( plane.getLife() === 0 )) ;
