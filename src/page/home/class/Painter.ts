@@ -11,6 +11,7 @@ class Painter {
     private wall : Wall | null = null ;
 
     private shotList : ShotList = new ShotList() ;
+    public static requestAnimationFramePid : any = null ;
 
     constructor( canvas : HTMLCanvasElement, backgroundSrc : string, wall : Wall ) {
         this.canvas = canvas ; 

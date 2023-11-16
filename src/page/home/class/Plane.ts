@@ -1,6 +1,9 @@
+import Painter from './Painter';
 import Wall from './Wall'
 import { Obj, Direction, size } from './util'
  
+const SCORE = 100 ;
+
 export type PlaneData = {
     planeImageSrc : string
     speed : number
@@ -146,6 +149,15 @@ class Plane extends Obj {
         clearInterval(this.shotMappingPid) ;
         this.shotMappingPid = 0 ;
     }
+
+    public gameEnd() {
+        const gameEnd = document.getElementsByClassName('gameEnd')[0] as HTMLParagraphElement ;
+        gameEnd.className = gameEnd.className.replace('hidden', 'flex') ;
+
+        const gameOver = document.getElementsByClassName('gameOver')[0] as HTMLParagraphElement ;
+        gameOver.className = gameOver.className.replace('hidden', 'block') ;
+    }
+
 }
 
 class UserPlane extends Plane {
@@ -155,24 +167,12 @@ class UserPlane extends Plane {
         userLife.innerText = `Life : ${this.getLife()}` ;
     }
 
-    // public gameEnd() {
-    //     const gameEnd = document.getElementsByClassName('gameEnd')[0] as HTMLParagraphElement ;
-    //     gameEnd.className.replace('hidden', 'flex') ;
-
-    //     const gameOver = document.getElementsByClassName('gameOver')[0] as HTMLParagraphElement ;
-    //     gameOver.className.replace('hidden', 'flex') ;
-    // }
-
     public setLife( life : number ) {
         this.life = life ;
         this.userLifeToHTML() ;
 
         if( this.life === 0 ) {
-            const gameEnd = document.getElementsByClassName('gameEnd')[0] as HTMLParagraphElement ;
-            gameEnd.className = gameEnd.className.replace('hidden', 'flex') ;
-
-            const gameOver = document.getElementsByClassName('gameOver')[0] as HTMLParagraphElement ;
-            gameOver.className = gameOver.className.replace('hidden', 'block') ;
+            this.gameEnd() ;
         }
     }
 
@@ -248,11 +248,48 @@ class EnemyPlane extends Plane {
     public movementMapping() {
         this.direction.left = true ;
     }
+
+    public move() {
+        try {
+            if( this.wall ) {
+                if( this.direction.up ) {
+                    if ( this.wall?.getTop() < this.position.y - this.speed ) {
+                        this.position.y -= this.speed ;
+                    }
+                }
+
+                if( this.direction.down ) {
+                    if ( this.wall?.getBottom() > this.position.y + this.speed ) {
+                        this.position.y += this.speed ;
+                    }
+                }
+
+                if( this.direction.left ) {
+                    if ( this.wall?.getLeft() < this.position.x - this.speed ) {
+                        this.position.x -= this.speed ;
+                    }else {
+                        this.gameEnd() ;
+                    }
+                }
+
+                if(this.direction.right) {
+                    if ( this.wall?.getRight() > this.position.x + this.speed ) {
+                        this.position.x += this.speed ;
+                    }
+                }
+            }
+        } catch (error) {
+            
+            console.log(error) ;
+
+        }
+    }
 }
 
 class PlaneList {
     protected enemyPlaneList : EnemyPlane[] = [] ;
     protected userPlaneList : UserPlane[] = [] ;
+    protected score : number = 0 ;
     private static instance : PlaneList | null = null ;
 
     constructor() {
@@ -309,6 +346,12 @@ class PlaneList {
     
         // Enemy Plane
         const notLifeEnemyPlane = this.enemyPlaneList.filter((plane : EnemyPlane) => ( plane.getLife() === 0 )) ;
+
+        this.score += SCORE * notLifeEnemyPlane.length ;
+        
+        const userScore = document.getElementsByClassName('userScore')[0] as HTMLParagraphElement ;
+        userScore.innerText = `Score : ${this.score}`
+
         this.enemyPlaneList = this.enemyPlaneList.filter((plane : EnemyPlane) => !notLifeEnemyPlane.includes(plane)) ;
     }
 }
