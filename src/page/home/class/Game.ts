@@ -1,6 +1,6 @@
 import { EnemyPlanLevelData } from "../data/enemyPlane";
 import Painter from "./Painter";
-import { PlaneList, PlaneKind, UserPlane } from "./Plane"
+import { PlaneList, PlaneKind } from "./Plane"
 import Wall from "./Wall"
 
 const ENEMPLANE_START_POSITION_X = 1200 ;
@@ -34,21 +34,18 @@ export default class Game {
     private wall : Wall | null = null ;
     private enemyPlaneDataList : EnemyPlanLevelData[] = [] ;
     private gameStatus : GameStatus = GameStatus.START ;
-
-    private planeList : PlaneList | null = null ;
+    private planeList : PlaneList = new PlaneList() ;
     
     constructor({
         title,
         enemyPlaneImformationList,
         wall,
         enemyPlaneDataList
-    } : GameData, planeList : PlaneList ) {
+    } : GameData ) {
         this.title = title ;
         this.enemyPlaneImformationList = enemyPlaneImformationList ;
         this.wall = wall ;
         this.enemyPlaneDataList = enemyPlaneDataList ;
-
-        this.planeList = planeList ;
     }
 
     public getTitle()           { return this.title ; }

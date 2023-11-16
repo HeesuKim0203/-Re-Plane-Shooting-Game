@@ -33,7 +33,7 @@ class Plane extends Obj {
     private shotDelay : number = 1000 ;
     private shotMappingPid : number = 0 ;
     private size : size = { width : 0, height : 0, expWidth : 0, expHeight : 0 } ;
-    private life : number = 0 ;
+    protected life : number = 0 ;
 
     // Shot Data
     private shotImgList : HTMLImageElement[] | null = null ;
@@ -155,6 +155,27 @@ class UserPlane extends Plane {
         userLife.innerText = `Life : ${this.getLife()}` ;
     }
 
+    // public gameEnd() {
+    //     const gameEnd = document.getElementsByClassName('gameEnd')[0] as HTMLParagraphElement ;
+    //     gameEnd.className.replace('hidden', 'flex') ;
+
+    //     const gameOver = document.getElementsByClassName('gameOver')[0] as HTMLParagraphElement ;
+    //     gameOver.className.replace('hidden', 'flex') ;
+    // }
+
+    public setLife( life : number ) {
+        this.life = life ;
+        this.userLifeToHTML() ;
+
+        if( this.life === 0 ) {
+            const gameEnd = document.getElementsByClassName('gameEnd')[0] as HTMLParagraphElement ;
+            gameEnd.className = gameEnd.className.replace('hidden', 'flex') ;
+
+            const gameOver = document.getElementsByClassName('gameOver')[0] as HTMLParagraphElement ;
+            gameOver.className = gameOver.className.replace('hidden', 'block') ;
+        }
+    }
+
     public keyDownToMoveMapping( event : KeyboardEvent ) : void {
 
         event.preventDefault() ;
@@ -230,9 +251,9 @@ class EnemyPlane extends Plane {
 }
 
 class PlaneList {
-    protected enemyPlaneList : Plane[] = [] ;
+    protected enemyPlaneList : EnemyPlane[] = [] ;
     protected userPlaneList : UserPlane[] = [] ;
-    private instance : PlaneList | null = null ;
+    private static instance : PlaneList | null = null ;
 
     constructor() {
         return this.getInstance() ;
@@ -242,10 +263,10 @@ class PlaneList {
     public getEnemyPlanes()             { return this.enemyPlaneList ; }
 
     public getInstance() {
-        if( this.instance ) return this.instance ;
+        if( PlaneList.instance ) return PlaneList.instance ;
 
-        this.instance = this ;
-        return this.instance ;
+        PlaneList.instance = this ;
+        return PlaneList.instance ;
     }
 
     public createPlane( 
@@ -287,8 +308,8 @@ class PlaneList {
         this.userPlaneList = this.userPlaneList.filter((plane : UserPlane) => !notLifeUserPlane.includes(plane)) ;
     
         // Enemy Plane
-        const notLifeEnemyPlane = this.enemyPlaneList.filter((plane : Plane) => ( plane.getLife() === 0 )) ;
-        this.enemyPlaneList = this.enemyPlaneList.filter((plane : Plane) => !notLifeEnemyPlane.includes(plane)) ;
+        const notLifeEnemyPlane = this.enemyPlaneList.filter((plane : EnemyPlane) => ( plane.getLife() === 0 )) ;
+        this.enemyPlaneList = this.enemyPlaneList.filter((plane : EnemyPlane) => !notLifeEnemyPlane.includes(plane)) ;
     }
 }
   
