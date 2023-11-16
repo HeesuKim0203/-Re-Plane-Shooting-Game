@@ -1,6 +1,9 @@
+import Painter from './Painter';
 import Wall from './Wall'
 import { Obj, Direction, size } from './util'
  
+const SCORE = 100 ;
+
 export type PlaneData = {
     planeImageSrc : string
     speed : number
@@ -33,7 +36,7 @@ class Plane extends Obj {
     private shotDelay : number = 1000 ;
     private shotMappingPid : number = 0 ;
     private size : size = { width : 0, height : 0, expWidth : 0, expHeight : 0 } ;
-    private life : number = 0 ;
+    protected life : number = 0 ;
 
     // Shot Data
     private shotImgList : HTMLImageElement[] | null = null ;
@@ -146,9 +149,32 @@ class Plane extends Obj {
         clearInterval(this.shotMappingPid) ;
         this.shotMappingPid = 0 ;
     }
+
+    public gameEnd() {
+        const gameEnd = document.getElementsByClassName('gameEnd')[0] as HTMLParagraphElement ;
+        gameEnd.className = gameEnd.className.replace('hidden', 'flex') ;
+
+        const gameOver = document.getElementsByClassName('gameOver')[0] as HTMLParagraphElement ;
+        gameOver.className = gameOver.className.replace('hidden', 'block') ;
+    }
+
 }
 
 class UserPlane extends Plane {
+
+    public userLifeToHTML() {
+        const userLife = document.getElementsByClassName('userLife')[0] as HTMLParagraphElement ;
+        userLife.innerText = `Life : ${this.getLife()}` ;
+    }
+
+    public setLife( life : number ) {
+        this.life = life ;
+        this.userLifeToHTML() ;
+
+        if( this.life === 0 ) {
+            this.gameEnd() ;
+        }
+    }
 
     public keyDownToMoveMapping( event : KeyboardEvent ) : void {
 
@@ -222,12 +248,49 @@ class EnemyPlane extends Plane {
     public movementMapping() {
         this.direction.left = true ;
     }
+
+    public move() {
+        try {
+            if( this.wall ) {
+                if( this.direction.up ) {
+                    if ( this.wall?.getTop() < this.position.y - this.speed ) {
+                        this.position.y -= this.speed ;
+                    }
+                }
+
+                if( this.direction.down ) {
+                    if ( this.wall?.getBottom() > this.position.y + this.speed ) {
+                        this.position.y += this.speed ;
+                    }
+                }
+
+                if( this.direction.left ) {
+                    if ( this.wall?.getLeft() < this.position.x - this.speed ) {
+                        this.position.x -= this.speed ;
+                    }else {
+                        this.gameEnd() ;
+                    }
+                }
+
+                if(this.direction.right) {
+                    if ( this.wall?.getRight() > this.position.x + this.speed ) {
+                        this.position.x += this.speed ;
+                    }
+                }
+            }
+        } catch (error) {
+            
+            console.log(error) ;
+
+        }
+    }
 }
 
 class PlaneList {
-    protected enemyPlaneList : Plane[] = [] ;
-    protected userPlaneList : Plane[] = [] ;
-    private instance : PlaneList | null = null ;
+    protected enemyPlaneList : EnemyPlane[] = [] ;
+    protected userPlaneList : UserPlane[] = [] ;
+    protected score : number = 0 ;
+    private static instance : PlaneList | null = null ;
 
     constructor() {
         return this.getInstance() ;
@@ -237,10 +300,10 @@ class PlaneList {
     public getEnemyPlanes()             { return this.enemyPlaneList ; }
 
     public getInstance() {
-        if( this.instance ) return this.instance ;
+        if( PlaneList.instance ) return PlaneList.instance ;
 
-        this.instance = this ;
-        return this.instance ;
+        PlaneList.instance = this ;
+        return PlaneList.instance ;
     }
 
     public createPlane( 
@@ -257,36 +320,39 @@ class PlaneList {
         switch(planeKind) {
             case PlaneKind.USERPLANE : 
                 plane = new UserPlane(id, wall, positionX, positionY, planeData) ;
-                this.registerPlane(plane, planeKind) ;
+                this.registerUserPlane(plane) ;
                 break ;
             case PlaneKind.ENEMYPLANE :
                 plane = new EnemyPlane(id, wall, positionX, positionY, planeData) ;
-                this.registerPlane(plane, planeKind) ;
+                this.registerEnemyPlane(plane) ;
                 break ;
         }
 
         return plane ;
     }
 
-    public registerPlane( plane : Plane, planeKind : PlaneKind ) : void {
-        switch(planeKind) {
-            case PlaneKind.USERPLANE : 
-                this.userPlaneList = this.userPlaneList.concat(plane) ;
-                break ;
-            case PlaneKind.ENEMYPLANE :
-                this.enemyPlaneList = this.enemyPlaneList.concat(plane) ;
-                break ;
-        }
+    public registerUserPlane( plane : UserPlane ) {
+        this.userPlaneList = this.userPlaneList.concat(plane) ;
+    }
+
+    public registerEnemyPlane( plane : EnemyPlane ) {
+        this.enemyPlaneList = this.enemyPlaneList.concat(plane) ;
     }
 
     public unregisterPlane() : void {
         // User Plane
-        const notLifeUserPlane = this.userPlaneList.filter((plane : Plane) => ( plane.getLife() === 0 )) ;
-        this.userPlaneList = this.userPlaneList.filter((plane : Plane) => !notLifeUserPlane.includes(plane)) ;
+        const notLifeUserPlane = this.userPlaneList.filter((plane : UserPlane) => ( plane.getLife() === 0 )) ;
+        this.userPlaneList = this.userPlaneList.filter((plane : UserPlane) => !notLifeUserPlane.includes(plane)) ;
     
         // Enemy Plane
-        const notLifeEnemyPlane = this.enemyPlaneList.filter((plane : Plane) => ( plane.getLife() === 0 )) ;
-        this.enemyPlaneList = this.enemyPlaneList.filter((plane : Plane) => !notLifeEnemyPlane.includes(plane)) ;
+        const notLifeEnemyPlane = this.enemyPlaneList.filter((plane : EnemyPlane) => ( plane.getLife() === 0 )) ;
+
+        this.score += SCORE * notLifeEnemyPlane.length ;
+        
+        const userScore = document.getElementsByClassName('userScore')[0] as HTMLParagraphElement ;
+        userScore.innerText = `Score : ${this.score}`
+
+        this.enemyPlaneList = this.enemyPlaneList.filter((plane : EnemyPlane) => !notLifeEnemyPlane.includes(plane)) ;
     }
 }
   

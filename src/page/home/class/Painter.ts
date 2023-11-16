@@ -1,20 +1,23 @@
-import { Plane, PlaneList } from './Plane'
+import { EnemyPlane, Plane, PlaneList, UserPlane } from './Plane'
 import { Shot, ShotList } from './Shot' ;
+import Wall from './Wall';
 
 class Painter {
     private canvas : HTMLCanvasElement ;
     private ctx : CanvasRenderingContext2D | null = null ;
 
     private backgroundSrc : string = "" ;
-    private planeList : PlaneList | null = null ;
+    private planeList : PlaneList = new PlaneList() ;
+    private wall : Wall | null = null ;
 
     private shotList : ShotList = new ShotList() ;
+    public static requestAnimationFramePid : any = null ;
 
-    constructor( canvas : HTMLCanvasElement, backgroundSrc : string, planeList : PlaneList ) {
+    constructor( canvas : HTMLCanvasElement, backgroundSrc : string, wall : Wall ) {
         this.canvas = canvas ; 
         this.ctx = this.canvas.getContext('2d') ;
         this.backgroundSrc = backgroundSrc ;
-        this.planeList = planeList ;
+        this.wall = wall ;
     }
 
     public initBackground() : void {
@@ -32,11 +35,11 @@ class Painter {
         if( this.planeList ) {
             // Draw User Plane
             const userPlaneList = this.planeList.getUserPlanes() ;
-            userPlaneList.forEach((plane : Plane) => this.drawPlane(plane, true)) ;
+            userPlaneList.forEach((plane : UserPlane) => this.drawPlane(plane)) ;
 
             // Draw Planes
             const enemyPlaneList = this.planeList.getEnemyPlanes() ;
-            enemyPlaneList.forEach((plane : Plane) => this.drawPlane(plane, false)) ;
+            enemyPlaneList.forEach((plane : EnemyPlane) => this.drawPlane(plane)) ;
 
             this.shotList.shotToDamagePlane(userPlaneList, enemyPlaneList) ;
         }
@@ -53,38 +56,36 @@ class Painter {
             }
         }) ;
         this.shotList.shotMove() ;
-        this.shotList.deleteShot() ;
-
         this.planeList?.unregisterPlane() ;
     }
 
-    private drawPlane( plane : Plane, userPlane : boolean ) {
+    private drawPlane( plane : Plane ) {
         const image = plane.getImg() ; 
         if( !image ) return ;
 
-        this.drawShotAndLogic(plane, userPlane) ;
+        this.drawShotAndLogic(plane) ;
         plane.move() ;
         const { x, y } = plane.position ;
         this.ctx?.drawImage(image, x, y, image.width, image.height) ;
     }
 
-    public drawShotAndLogic( plane : Plane, userPlane : boolean ) {
-        if( plane.checkShotStatusAction() && plane.wall ) {
+    public drawShotAndLogic( plane : Plane ) {
+        if( plane.checkShotStatusAction() && this.wall ) {
 
             const shotImgList = plane.getImgList() ;
 
-            const { shotPositionX, shotPositionY } = plane.getShotPosition(userPlane) ;
+            const { shotPositionX, shotPositionY } = plane.getShotPosition(plane instanceof UserPlane) ;
 
             if( shotImgList ) {
                 this.shotList.createShot(
                     shotPositionX,
                     shotPositionY,
-                    plane.wall,
+                    this.wall,
                     plane.getShotSize(),
                     plane.getShotSpeed(),
                     plane.getShotListNormalImageIndex(),
                     plane.getShotCollisionImageIndex(),
-                    userPlane,
+                    plane instanceof UserPlane,
                     shotImgList,
                     plane.getShotDamage()
                 ) ;

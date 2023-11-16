@@ -30,8 +30,8 @@ const userPlaneData : PlaneData = {
         expWidth : 64,
         expHeight : 64
     },
-    speed : 5,
-    life : 10,
+    speed : 4,
+    life : 3,
     shotDamage : 1,
     shootImgSrcList : [
         shoot1Src,
@@ -47,7 +47,7 @@ const userPlaneData : PlaneData = {
         shoot11Src,
         shoot12Src,
     ],
-    shotDelay : 200,
+    shotDelay : 400,
     shotSpeed : 10,
     shotListNormalImageIndex : 6,
     shotCollisionImageIndex : 8

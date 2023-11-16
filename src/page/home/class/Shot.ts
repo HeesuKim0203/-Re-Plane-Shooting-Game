@@ -1,4 +1,4 @@
-import { Plane } from './Plane';
+import { Plane, UserPlane } from './Plane';
 import Wall from './Wall'
 import { Obj, size } from './util'
 
@@ -109,7 +109,7 @@ export class Shot extends Obj {
 
 export class ShotList {
     private shotList : Shot[] = [] ;
-    private instance : ShotList | null = null ;
+    private static instance : ShotList | null = null ;
 
     constructor() {}
 
@@ -118,10 +118,10 @@ export class ShotList {
     public getShots()              { return this.shotList ; }
     
     public getInstance() {
-        if( this.instance ) return this.instance ;
+        if( ShotList.instance ) return ShotList.instance ;
 
-        this.instance = this ;
-        return this.instance ;
+        ShotList.instance = this ;
+        return ShotList.instance ;
     }
 
     public createShot( 
@@ -153,13 +153,13 @@ export class ShotList {
         this.shotList = this.shotList.concat(shot) ;
     }
 
-    public shotToDamagePlane( userPlanes : Plane[], enemyPlane : Plane[] ) {
+    public shotToDamagePlane( userPlanes : UserPlane[], enemyPlane : Plane[] ) {
 
         const enemyShotList = this.shotList.filter(( shot : Shot ) => ( shot.getDirection().left === true ) && shot.getState() === ShotStatus.NORAML) ; // Enemy Shot
         const userShotList = this.shotList.filter(( shot : Shot ) => ( shot.getDirection().left === false ) && shot.getState() === ShotStatus.NORAML) ; // User Shot
 
         enemyShotList.forEach(( shot : Shot ) => {
-            userPlanes.forEach(( plane : Plane ) => {
+            userPlanes.forEach(( plane : UserPlane ) => {
                 if( plane.position.y < shot.position.y + shot.getSize().height && plane.position.y + plane.getSize().height > shot.position.y ) {
                     if( plane.position.x + plane.getSize().width >= shot.position.x && plane.position.x < shot.position.x + shot.getSize().width ) {
                         plane.setLife(plane.getLife() - shot.getDamage()) ;
@@ -172,7 +172,7 @@ export class ShotList {
         userShotList.forEach(( shot : Shot ) => {
             enemyPlane.forEach(( plane : Plane ) => {
                 if( plane.position.y < shot.position.y + shot.getSize().height && plane.position.y + plane.getSize().height > shot.position.y ) {
-                    if( plane.position.x <= shot.position.x ) {
+                    if( plane.position.x <= shot.position.x + shot.getSize().width && plane.position.x + plane.getSize().width >= shot.position.x ) {
                         plane.setLife(plane.getLife() - shot.getDamage()) ;
                         shot.setStateToCollison() ;
                     }
@@ -190,5 +190,7 @@ export class ShotList {
         this.shotList.forEach((shot : Shot) => {
             shot.move() ;
         }) ;
+
+        this.deleteShot() ;
     }
 }
