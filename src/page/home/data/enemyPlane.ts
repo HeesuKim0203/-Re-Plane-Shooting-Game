@@ -12,6 +12,18 @@ import shoot10Src from '../img/shot/enemyPlaneShot/shot5_exp5.png'
 import shoot11Src from '../img/shot/enemyPlaneShot/shot5_exp6.png'
 import shoot12Src from '../img/shot/enemyPlaneShot/shot5_exp7.png'
 
+import planeExp1 from '../img/planes/enemyPlaneExp/exp1.png'
+import planeExp2 from '../img/planes/enemyPlaneExp/exp2.png'
+import planeExp3 from '../img/planes/enemyPlaneExp/exp3.png'
+import planeExp4 from '../img/planes/enemyPlaneExp/exp4.png'
+import planeExp5 from '../img/planes/enemyPlaneExp/exp5.png'
+import planeExp6 from '../img/planes/enemyPlaneExp/exp6.png'
+import planeExp7 from '../img/planes/enemyPlaneExp/exp7.png'
+import planeExp8 from '../img/planes/enemyPlaneExp/exp8.png'
+import planeExp9 from '../img/planes/enemyPlaneExp/exp9.png'
+import planeExp10 from '../img/planes/enemyPlaneExp/exp10.png'
+import planeExp11 from '../img/planes/enemyPlaneExp/exp11.png'
+
 import level1EnemyPlaneSrc from '../img/planes/level1_enemy_planes.png'
 import { PlaneData } from '../class/Plane'
 
@@ -25,6 +37,19 @@ const enemyPlaneList : EnemyPlanLevelData[] = [
         level : 1,
         planeDate : {
             planeImageSrc : level1EnemyPlaneSrc,
+            planeExpImageSrcList : [
+                planeExp1,
+                planeExp2,
+                planeExp3,
+                planeExp4,
+                planeExp5,
+                planeExp6,
+                planeExp7,
+                planeExp8,
+                planeExp9,
+                planeExp1,
+                planeExp1,
+            ],
             size : {
                 width : 105,
                 height : 82,

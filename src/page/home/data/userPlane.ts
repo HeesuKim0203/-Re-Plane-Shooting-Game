@@ -18,6 +18,7 @@ import userPlaneSrc from '../img/planes/user_airplane.png'
 
 const userPlaneData : PlaneData = {
     planeImageSrc : userPlaneSrc,
+    planeExpImageSrcList : [],
     size : {
         width : 77,
         height : 34, 

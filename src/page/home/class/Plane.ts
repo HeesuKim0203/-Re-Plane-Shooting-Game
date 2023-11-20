@@ -6,6 +6,7 @@ const SCORE = 100 ;
 
 export type PlaneData = {
     planeImageSrc : string
+    planeExpImageSrcList : string[]
     speed : number
     life : number
     size : size
@@ -23,6 +24,12 @@ export enum PlaneKind {
     ENEMYPLANE = 1
 }
 
+enum PlaneStatus {
+    NORAML = 0,
+    COLLISION = 1,
+    END = 2
+}
+
 enum ShotStatus {
     STOP = 0,
     ACTION = 1,
@@ -31,7 +38,8 @@ enum ShotStatus {
 class Plane extends Obj {
     // Plane Data
     private id : number = 0 ;
-    private img : HTMLImageElement | null = null ;
+    private planeExpImgList : HTMLImageElement[] = [] ;
+    private img : HTMLImageElement = new Image() ;
     private shotAction : ShotStatus = ShotStatus.STOP ;
     private shotDelay : number = 1000 ;
     private shotMappingPid : number = 0 ;
@@ -53,6 +61,7 @@ class Plane extends Obj {
         positionY : number,
         {
             planeImageSrc,
+            planeExpImageSrcList,
             size,
             shotSize,
             speed,
@@ -72,10 +81,18 @@ class Plane extends Obj {
         this.size = size ;
         this.life = life ;
 
-        this.img = new Image() ;
         this.img.src = planeImageSrc ;
         this.img.width = size.width ;
         this.img.height = size.height ;
+
+        this.planeExpImgList = planeExpImageSrcList.map(( src : string, index : number ) => {
+            const img = new Image() ;
+            img.src = src ;
+            img.width = size.expWidth ;
+            img.height = size.expHeight ;
+
+            return img ;
+        }) ;
 
         this.shotDamage = shotDamage ;
         this.shotDelay = shotDelay ;
@@ -99,7 +116,6 @@ class Plane extends Obj {
     }
 
     public getId()                          { return this.id ; } 
-    public getImg()                         { return this.img ; }
     public getImgList()                     { return this.shotImgList ; }
     public getShotStatus()                  { return this.shotAction ; }
     public getShotDelay()                   { return this.shotDelay ; }
@@ -123,6 +139,9 @@ class Plane extends Obj {
         const shotPositionY = this.position.y + (this.size.height / 2) - (this.shotSize.height / 2) ; 
         
         return { shotPositionX, shotPositionY }
+    }
+    public getImg() { 
+        return this.img ; 
     }
     public setLife( life : number ) {
         this.life = life ;
