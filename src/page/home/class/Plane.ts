@@ -46,6 +46,8 @@ class Plane extends Obj {
     private size : size = { width : 0, height : 0, expWidth : 0, expHeight : 0 } ;
     protected life : number = 0 ;
 
+    protected planeStatus : PlaneStatus = PlaneStatus.NORAML ;
+
     // Shot Data
     private shotImgList : HTMLImageElement[] | null = null ;
     private shotSpeed : number = 0 ;
@@ -127,6 +129,7 @@ class Plane extends Obj {
     public getLife()                        { return this.life ; }
     public getShotDamage()                  { return this.shotDamage ; }    
     public getShotSize()                    { return this.shotSize ; }
+    public getPlaneStatus()                 { return this.planeStatus ; }
     public getShotPosition( direction : boolean ) {
 
         let shotPositionX ;
@@ -144,6 +147,9 @@ class Plane extends Obj {
         return this.img ; 
     }
     public setLife( life : number ) {
+
+        if( life === 0  ) this.planeStatus = PlaneStatus.COLLISION ;
+
         this.life = life ;
     }
     public checkShotStatusAction() {
