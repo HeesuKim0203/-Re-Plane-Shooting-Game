@@ -58,7 +58,11 @@ export class Shot extends Obj {
         return this.currentIndex = currentIndex ; 
     }
 
-    public setStateToCollison() { this.state = ShotStatus.COLLISION ; }
+    public setStateToCollison() { 
+        this.position.x = this.position.x - (this.size.expWidth - this.size.width) / 2 ;
+        this.position.y = this.position.y - (this.size.expWidth - this.size.height) / 2 ;
+        this.state = ShotStatus.COLLISION ; 
+    }
     public deleteDetermining()  { 
         if( this.imgList ) {
             return this.imgList?.length === this.currentIndex ;

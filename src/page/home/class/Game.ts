@@ -3,6 +3,8 @@ import Painter from "./Painter";
 import { PlaneList, PlaneKind } from "./Plane"
 import Wall from "./Wall"
 
+
+const SCORE = 100 ;
 const ENEMPLANE_START_POSITION_X = 1200 ;
 const ENEMPLANE_START_POSITION_Y_MIN = 0 ;
 const ENEMPLANE_START_POSITION_Y_MAX = 600 ;
@@ -35,6 +37,8 @@ export default class Game {
     private enemyPlaneDataList : EnemyPlanLevelData[] = [] ;
     private gameStatus : GameStatus = GameStatus.START ;
     private planeList : PlaneList = new PlaneList() ;
+    public static enemyPlaneNum : number = 0 ;
+    public static userScore : number = 0 ;
     
     constructor({
         title,
@@ -57,6 +61,9 @@ export default class Game {
         let time = 0 ;
 
         this.enemyPlaneImformationList.forEach((enemyPlaneImportmation : EnemyPlaneImformation, index : number) => {
+
+            Game.enemyPlaneNum += enemyPlaneImportmation.num ;
+
             for(let i = 0 ; i < enemyPlaneImportmation.num ; i++) {
                 const findIndex = this.enemyPlaneDataList.findIndex((enemyPlanData : EnemyPlanLevelData) => enemyPlanData.level === enemyPlaneImportmation.level) ;
                 const planeData = this.enemyPlaneDataList[findIndex].planeDate ;
@@ -76,5 +83,41 @@ export default class Game {
     // Game Clear
     public end() {
         
+    }
+}
+
+export function gameOver() {
+    const gameEnd = document.getElementsByClassName('gameEnd')[0] as HTMLParagraphElement ;
+    gameEnd.className = gameEnd.className.replace('hidden', 'flex') ;
+
+    const gameOver = document.getElementsByClassName('gameOver')[0] as HTMLParagraphElement ;
+    gameOver.className = gameOver.className.replace('hidden', 'block') ;
+}
+
+export function gameClear() {
+    const gameEnd = document.getElementsByClassName('gameEnd')[0] as HTMLParagraphElement ;
+    gameEnd.className = gameEnd.className.replace('hidden', 'flex') ;
+
+    const gameOver = document.getElementsByClassName('gameClear')[0] as HTMLParagraphElement ;
+    gameOver.className = gameOver.className.replace('hidden', 'block') ;
+}
+
+export function setUserLifeHTML( life : number ) {
+    const userLife = document.getElementsByClassName('userLife')[0] as HTMLParagraphElement ;
+    userLife.innerText = `Life : ${life <= 0 ? 0 : life}` ;
+
+    if( life === 0 ) {
+        gameOver() ;
+    }
+}
+
+export function setUserScoreHTML( score : number ) {
+    Game.userScore += SCORE * score ;
+    
+    const userScore = document.getElementsByClassName('userScore')[0] as HTMLParagraphElement ;
+    userScore.innerText = `Score : ${Game.userScore}` ;
+
+    if( Game.enemyPlaneNum !== 0 && Game.userScore === Game.enemyPlaneNum * SCORE ) {
+        gameClear() ;
     }
 }

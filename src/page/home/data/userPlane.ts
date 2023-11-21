@@ -17,6 +17,7 @@ import shoot12Src from '../img/shot/userPlaneShot/shot2_exp5.png'
 import userPlaneSrc from '../img/planes/user_airplane.png'
 
 const userPlaneData : PlaneData = {
+    planeImageRunSrc : "",
     planeImageSrc : userPlaneSrc,
     planeExpImageSrcList : [],
     size : {
@@ -31,7 +32,7 @@ const userPlaneData : PlaneData = {
         expWidth : 64,
         expHeight : 64
     },
-    speed : 4,
+    speed : 5,
     life : 3,
     shotDamage : 1,
     shootImgSrcList : [
