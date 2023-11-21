@@ -1,11 +1,11 @@
-import Painter from './Painter';
 import Wall from './Wall'
 import { Obj, Direction, size } from './util'
- 
-const SCORE = 100 ;
+import { gameOver, gameClear, setUserLifeHTML, setUserScoreHTML } from './Game'
 
 export type PlaneData = {
     planeImageSrc : string
+    planeImageRunSrc : string
+    planeExpImageSrcList : string[]
     speed : number
     life : number
     size : size
@@ -23,6 +23,12 @@ export enum PlaneKind {
     ENEMYPLANE = 1
 }
 
+enum PlaneStatus {
+    NORAML = 0,
+    COLLISION = 1,
+    END = 2
+}
+
 enum ShotStatus {
     STOP = 0,
     ACTION = 1,
@@ -31,12 +37,15 @@ enum ShotStatus {
 class Plane extends Obj {
     // Plane Data
     private id : number = 0 ;
-    private img : HTMLImageElement | null = null ;
+    private planeExpImgList : HTMLImageElement[] = [] ;
+    protected planeExpImgIndex : number = 0 ;
+    private img : HTMLImageElement = new Image() ;
     private shotAction : ShotStatus = ShotStatus.STOP ;
     private shotDelay : number = 1000 ;
     private shotMappingPid : number = 0 ;
     private size : size = { width : 0, height : 0, expWidth : 0, expHeight : 0 } ;
     protected life : number = 0 ;
+    protected planeStatus : PlaneStatus = PlaneStatus.NORAML ;
 
     // Shot Data
     private shotImgList : HTMLImageElement[] | null = null ;
@@ -53,6 +62,7 @@ class Plane extends Obj {
         positionY : number,
         {
             planeImageSrc,
+            planeExpImageSrcList,
             size,
             shotSize,
             speed,
@@ -72,10 +82,18 @@ class Plane extends Obj {
         this.size = size ;
         this.life = life ;
 
-        this.img = new Image() ;
         this.img.src = planeImageSrc ;
         this.img.width = size.width ;
         this.img.height = size.height ;
+
+        this.planeExpImgList = planeExpImageSrcList.map(( src : string, index : number ) => {
+            const img = new Image() ;
+            img.src = src ;
+            img.width = size.expWidth ;
+            img.height = size.expHeight ;
+
+            return img ;
+        }) ;
 
         this.shotDamage = shotDamage ;
         this.shotDelay = shotDelay ;
@@ -97,9 +115,7 @@ class Plane extends Obj {
             return img ;
         }) ;
     }
-
     public getId()                          { return this.id ; } 
-    public getImg()                         { return this.img ; }
     public getImgList()                     { return this.shotImgList ; }
     public getShotStatus()                  { return this.shotAction ; }
     public getShotDelay()                   { return this.shotDelay ; }
@@ -111,20 +127,43 @@ class Plane extends Obj {
     public getLife()                        { return this.life ; }
     public getShotDamage()                  { return this.shotDamage ; }    
     public getShotSize()                    { return this.shotSize ; }
+    public getPlaneStatus()                 { return this.planeStatus ; }
     public getShotPosition( direction : boolean ) {
-
         let shotPositionX ;
-
         const middle = this.size.width ;
 
         if( direction ) shotPositionX = this.position.x + middle ;
         else shotPositionX = this.position.x - middle ;
 
         const shotPositionY = this.position.y + (this.size.height / 2) - (this.shotSize.height / 2) ; 
-        
-        return { shotPositionX, shotPositionY }
+        return { shotPositionX, shotPositionY } ;
+    }
+    public getImg() { 
+        let img : HTMLImageElement ;
+        switch( this.planeStatus ) {
+            case PlaneStatus.COLLISION :
+                // x, y update
+                if( this.planeExpImgIndex === 0 ) {
+                    this.position.x = this.position.x - (this.size.expWidth - this.size.width) / 2 ;
+                    this.position.y = this.position.y - (this.size.expWidth - this.size.height) / 2 ;
+                }
+                img = this.planeExpImgList[this.planeExpImgIndex] ;
+                this.planeExpImgIndex++ ;
+                // PlaneStatus End 
+                if( this.planeExpImgIndex === this.planeExpImgList.length ) this.planeStatus = PlaneStatus.END ;
+                break ;
+            case PlaneStatus.NORAML :
+                img = this.img ;
+                break ;
+            case PlaneStatus.END :
+            default :
+                img = new Image() ;
+                break ;
+        }
+        return img ; 
     }
     public setLife( life : number ) {
+        if( life === 0  ) this.planeStatus = PlaneStatus.COLLISION ;
         this.life = life ;
     }
     public checkShotStatusAction() {
@@ -149,31 +188,14 @@ class Plane extends Obj {
         clearInterval(this.shotMappingPid) ;
         this.shotMappingPid = 0 ;
     }
-
-    public gameEnd() {
-        const gameEnd = document.getElementsByClassName('gameEnd')[0] as HTMLParagraphElement ;
-        gameEnd.className = gameEnd.className.replace('hidden', 'flex') ;
-
-        const gameOver = document.getElementsByClassName('gameOver')[0] as HTMLParagraphElement ;
-        gameOver.className = gameOver.className.replace('hidden', 'block') ;
-    }
-
 }
 
 class UserPlane extends Plane {
 
-    public userLifeToHTML() {
-        const userLife = document.getElementsByClassName('userLife')[0] as HTMLParagraphElement ;
-        userLife.innerText = `Life : ${this.getLife()}` ;
-    }
-
     public setLife( life : number ) {
+        setUserLifeHTML( life ) ;
+        if( life === 0  ) this.planeStatus = PlaneStatus.COLLISION ;
         this.life = life ;
-        this.userLifeToHTML() ;
-
-        if( this.life === 0 ) {
-            this.gameEnd() ;
-        }
     }
 
     public keyDownToMoveMapping( event : KeyboardEvent ) : void {
@@ -251,7 +273,7 @@ class EnemyPlane extends Plane {
 
     public move() {
         try {
-            if( this.wall ) {
+            if( this.wall &&  this.planeStatus === PlaneStatus.NORAML ) {
                 if( this.direction.up ) {
                     if ( this.wall?.getTop() < this.position.y - this.speed ) {
                         this.position.y -= this.speed ;
@@ -265,10 +287,11 @@ class EnemyPlane extends Plane {
                 }
 
                 if( this.direction.left ) {
-                    if ( this.wall?.getLeft() < this.position.x - this.speed ) {
-                        this.position.x -= this.speed ;
-                    }else {
-                        this.gameEnd() ;
+                    this.position.x -= this.speed ;
+                    if( this.wall?.getLeft() > this.position.x - this.speed  ) {
+                        gameOver() ;
+                    }else if( this.wall?.getLeft() > this.position.x + this.getSize().width ) {
+                        this.planeStatus = PlaneStatus.END ;
                     }
                 }
 
@@ -341,18 +364,14 @@ class PlaneList {
 
     public unregisterPlane() : void {
         // User Plane
-        const notLifeUserPlane = this.userPlaneList.filter((plane : UserPlane) => ( plane.getLife() === 0 )) ;
+        const notLifeUserPlane = this.userPlaneList.filter((plane : UserPlane) => ( plane.getPlaneStatus() === PlaneStatus.END )) ;
         this.userPlaneList = this.userPlaneList.filter((plane : UserPlane) => !notLifeUserPlane.includes(plane)) ;
     
         // Enemy Plane
-        const notLifeEnemyPlane = this.enemyPlaneList.filter((plane : EnemyPlane) => ( plane.getLife() === 0 )) ;
-
-        this.score += SCORE * notLifeEnemyPlane.length ;
-        
-        const userScore = document.getElementsByClassName('userScore')[0] as HTMLParagraphElement ;
-        userScore.innerText = `Score : ${this.score}`
-
+        const notLifeEnemyPlane = this.enemyPlaneList.filter((plane : EnemyPlane) => ( plane.getPlaneStatus() === PlaneStatus.END )) ;
         this.enemyPlaneList = this.enemyPlaneList.filter((plane : EnemyPlane) => !notLifeEnemyPlane.includes(plane)) ;
+
+        setUserScoreHTML( notLifeEnemyPlane.length ) ;
     }
 }
   

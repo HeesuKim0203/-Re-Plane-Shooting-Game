@@ -38,9 +38,7 @@ const Canvas = ( props : CanvasProps ) => {
     paint.initBackground() ;
     paint.runAnimationFrame() ;
 
-    window.addEventListener('focus', (event) => {
-      window.location.reload() ;
-    }, false);
+    window.addEventListener('focus', (event) => window.location.reload(), false);
 
     const game = new Game({ title : gameData.title, enemyPlaneImformationList : gameData.enemyPlaneList, wall : wall, painter : paint, enemyPlaneDataList : enemyPlaneList }) ;
     
