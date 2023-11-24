@@ -1,10 +1,8 @@
-import Wall from './Wall'
 import { Obj, Direction, size } from './util'
 import { gameOver, gameClear, setUserLifeHTML, setUserScoreHTML } from './Game'
 
 export type PlaneData = {
     planeImageSrc : string
-    planeImageRunSrc : string
     planeExpImageSrcList : string[]
     speed : number
     life : number
@@ -57,7 +55,6 @@ class Plane extends Obj {
 
     constructor( 
         id : number, 
-        wall : Wall,
         positionX : number,
         positionY : number,
         {
@@ -76,7 +73,7 @@ class Plane extends Obj {
         } : PlaneData
     ) {
         
-        super( positionX, positionY, wall, speed ) ;
+        super( positionX, positionY, speed ) ;
 
         this.id = id ;
         this.size = size ;
@@ -255,13 +252,12 @@ class UserPlane extends Plane {
 class EnemyPlane extends Plane {
 
     constructor( 
-        id : number, 
-        wall : Wall,
+        id : number,
         positionX : number,
         positionY : number,
         planeData : PlaneData
     ) {
-        super( id, wall,  positionX, positionY, planeData ) ;
+        super( id, positionX, positionY, planeData ) ;
 
         this.movementMapping() ;
         this.shotMapping() ;
@@ -331,7 +327,6 @@ class PlaneList {
 
     public createPlane( 
         id : number, 
-        wall : Wall,
         positionX : number,
         positionY : number,
         planeData : PlaneData,
@@ -342,11 +337,11 @@ class PlaneList {
 
         switch(planeKind) {
             case PlaneKind.USERPLANE : 
-                plane = new UserPlane(id, wall, positionX, positionY, planeData) ;
+                plane = new UserPlane(id, positionX, positionY, planeData) ;
                 this.registerUserPlane(plane) ;
                 break ;
             case PlaneKind.ENEMYPLANE :
-                plane = new EnemyPlane(id, wall, positionX, positionY, planeData) ;
+                plane = new EnemyPlane(id, positionX, positionY, planeData) ;
                 this.registerEnemyPlane(plane) ;
                 break ;
         }

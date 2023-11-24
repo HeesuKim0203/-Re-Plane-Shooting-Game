@@ -1,5 +1,15 @@
 import Wall from './Wall'
 
+const SCORE = 100 ;
+const ENEMPLANE_MIN_TIME = 500 ;
+const ENEMPLANE_MAX_TIME = 2500 ;
+
+export {
+    SCORE,
+    ENEMPLANE_MIN_TIME,
+    ENEMPLANE_MAX_TIME,
+}
+
 export interface Position {
     x: number;
     y: number;
@@ -27,16 +37,14 @@ export type size = {
 }
 
 export class Obj {
-    wall : Wall | null = null ;
+    wall : Wall = new Wall(0, 0, 0, 0) ;
     direction : Move = { down : false, up : false, left : false, right : false } ;
     position : Position = { x : 0, y : 0 } ;
     speed : number = 0 ;
 
-    constructor( positionX : number, positionY : number, wall : Wall, speed : number ) {
+    constructor( positionX : number, positionY : number, speed : number ) {
         this.position.x = positionX ;
         this.position.y = positionY ;
-
-        this.wall = wall ;
         this.speed = speed ;
     }
 

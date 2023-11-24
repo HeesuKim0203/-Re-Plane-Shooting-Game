@@ -1,6 +1,5 @@
 import { EnemyPlane, Plane, PlaneList, UserPlane } from './Plane'
 import { Shot, ShotList } from './Shot' ;
-import Wall from './Wall';
 
 class Painter {
     private canvas : HTMLCanvasElement ;
@@ -8,16 +7,14 @@ class Painter {
 
     private backgroundSrc : string = "" ;
     private planeList : PlaneList = new PlaneList() ;
-    private wall : Wall | null = null ;
 
     private shotList : ShotList = new ShotList() ;
     public static requestAnimationFramePid : any = null ;
 
-    constructor( canvas : HTMLCanvasElement, backgroundSrc : string, wall : Wall ) {
+    constructor( canvas : HTMLCanvasElement, backgroundSrc : string ) {
         this.canvas = canvas ; 
         this.ctx = this.canvas.getContext('2d') ;
         this.backgroundSrc = backgroundSrc ;
-        this.wall = wall ;
     }
 
     public initBackground() : void {
@@ -70,7 +67,7 @@ class Painter {
     }
 
     public drawShotAndLogic( plane : Plane ) {
-        if( plane.checkShotStatusAction() && this.wall ) {
+        if( plane.checkShotStatusAction() ) {
 
             const shotImgList = plane.getImgList() ;
 
@@ -80,7 +77,6 @@ class Painter {
                 this.shotList.createShot(
                     shotPositionX,
                     shotPositionY,
-                    this.wall,
                     plane.getShotSize(),
                     plane.getShotSpeed(),
                     plane.getShotListNormalImageIndex(),
