@@ -56,14 +56,13 @@ import level1EnemyPlaneSrcLevel2 from '../img/planes/level2_enemy_planes.png'
 
 export type EnemyPlanLevelData = {
     level : number
-    planeDate : PlaneData
+    planeData : PlaneData
 }
 
 const enemyPlaneList : EnemyPlanLevelData[] = [
     {
         level : 1,
-        planeDate : {
-            planeImageRunSrc : "",
+        planeData : {
             planeImageSrc : level1EnemyPlaneSrc,
             planeExpImageSrcList : [
                 planeExp1,
@@ -115,8 +114,7 @@ const enemyPlaneList : EnemyPlanLevelData[] = [
     },
     {
         level : 2,
-        planeDate : {
-            planeImageRunSrc : "",
+        planeData : {
             planeImageSrc : level1EnemyPlaneSrcLevel2,
             planeExpImageSrcList : [
                 planeExp1Level2,

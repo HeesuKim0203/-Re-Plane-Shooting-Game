@@ -22,7 +22,7 @@ const Canvas = ( props : CanvasProps ) => {
     const height = props.height as number ;
 
     const wall = new Wall(0, 0, width, height) ;
-    const userPlane = new UserPlane(0, wall, 40, (height / 2) - (userPlaneData.size.height / 2), userPlaneData) ;
+    const userPlane = new UserPlane(0, 40, (height / 2) - (userPlaneData.size.height / 2), userPlaneData) ;
 
     const planeList = new PlaneList() ;
     planeList.registerUserPlane(userPlane) ;
@@ -30,7 +30,7 @@ const Canvas = ( props : CanvasProps ) => {
     const userLife = document.getElementsByClassName('userLife')[0] as HTMLParagraphElement ;
     userLife.innerText = `Life : ${userPlane.getLife()}` ;
 
-    const paint = new Painter(canvas, backgroundSrc, wall) ;
+    const paint = new Painter(canvas, backgroundSrc) ;
 
     document.addEventListener('keydown', (event) => userPlane.keyDownToMoveMapping(event));
     document.addEventListener('keyup', (event) => userPlane.keyUpToMoveMapping(event));
@@ -40,7 +40,7 @@ const Canvas = ( props : CanvasProps ) => {
 
     window.addEventListener('focus', (event) => window.location.reload(), false);
 
-    const game = new Game({ title : gameData.title, enemyPlaneImformationList : gameData.enemyPlaneList, wall : wall, painter : paint, enemyPlaneDataList : enemyPlaneList }) ;
+    const game = new Game({ title : gameData.title, enemyPlaneImformationList : gameData.enemyPlaneList, painter : paint, enemyPlaneDataList : enemyPlaneList }) ;
     
     game.start() ;
   }) ; 

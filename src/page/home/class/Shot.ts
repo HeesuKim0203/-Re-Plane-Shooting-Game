@@ -19,8 +19,7 @@ export class Shot extends Obj {
 
     constructor(
         positionX : number, 
-        positionY : number, 
-        wall : Wall, 
+        positionY : number,
         size : size,
         speed : number, 
         normalImageIndex : number,
@@ -29,7 +28,7 @@ export class Shot extends Obj {
         imgList : HTMLImageElement[],
         damage : number
     ) {
-        super( positionX, positionY, wall, speed ) ;
+        super( positionX, positionY, speed ) ;
 
         this.normalImageIndex = normalImageIndex ;
         this.collisionImageIndex = collisionImageIndex ;
@@ -131,7 +130,6 @@ export class ShotList {
     public createShot( 
         positionX : number, 
         positionY : number, 
-        wall : Wall, 
         size : size,
         speed : number, 
         normalImageIndex : number,
@@ -144,7 +142,6 @@ export class ShotList {
         const shot = new Shot(
             positionX,
             positionY,
-            wall,
             size,
             speed,
             normalImageIndex,
