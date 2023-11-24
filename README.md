@@ -39,6 +39,23 @@ Name|Type|Description|
 |level|number|Enemy plane level(Used to divide types of planes)|
 |planeData|PlaneData|Data on enemy planes by level(Same as user plane data)|
 
+### Enemy Plane Imfotmation Apply to Game
+Please correct the data.json  
+
+data.json
+
+Name|Type|Description|
+|------|---|---|
+|title|string|Game Title|
+|enemyPlaneList|EnemyPlaneImformation|Plane level and number of planes|
+
+Type EnemyPlaneImformation
+
+Name|Type|Description|
+|------|---|---|
+|level|number|Plane level|
+|num|number|Plane number|
+
 ### Other data settings
 
 Type size
