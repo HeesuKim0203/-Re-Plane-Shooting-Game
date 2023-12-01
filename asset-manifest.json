@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/shootingGame/static/css/main.d38a9bdc.css",
-    "main.js": "/shootingGame/static/js/main.939e2873.js",
-    "static/js/787.5f449e69.chunk.js": "/shootingGame/static/js/787.5f449e69.chunk.js",
-    "static/media/background.png": "/shootingGame/static/media/background.b851206f2decb7564b10.png",
-    "index.html": "/shootingGame/index.html",
-    "main.d38a9bdc.css.map": "/shootingGame/static/css/main.d38a9bdc.css.map",
-    "main.939e2873.js.map": "/shootingGame/static/js/main.939e2873.js.map",
-    "787.5f449e69.chunk.js.map": "/shootingGame/static/js/787.5f449e69.chunk.js.map"
+    "main.css": "/shooting-game/static/css/main.cec8d798.css",
+    "main.js": "/shooting-game/static/js/main.237fb894.js",
+    "static/js/787.5f449e69.chunk.js": "/shooting-game/static/js/787.5f449e69.chunk.js",
+    "static/media/background.png": "/shooting-game/static/media/background.b851206f2decb7564b10.png",
+    "index.html": "/shooting-game/index.html",
+    "main.cec8d798.css.map": "/shooting-game/static/css/main.cec8d798.css.map",
+    "main.237fb894.js.map": "/shooting-game/static/js/main.237fb894.js.map",
+    "787.5f449e69.chunk.js.map": "/shooting-game/static/js/787.5f449e69.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.d38a9bdc.css",
-    "static/js/main.939e2873.js"
+    "static/css/main.cec8d798.css",
+    "static/js/main.237fb894.js"
   ]
 }
