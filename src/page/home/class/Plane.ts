@@ -1,5 +1,5 @@
 import { Obj, Direction, size } from './util'
-import { gameOver, gameClear, setUserLifeHTML, setUserScoreHTML } from './Game'
+import Game from './Game'
 
 export type PlaneData = {
     planeImageSrc : string
@@ -190,7 +190,7 @@ class Plane extends Obj {
 class UserPlane extends Plane {
 
     public setLife( life : number ) {
-        setUserLifeHTML( life ) ;
+        Game.setUserLifeHTML( life ) ;
         if( life === 0  ) this.planeStatus = PlaneStatus.COLLISION ;
         this.life = life ;
     }
@@ -285,7 +285,7 @@ class EnemyPlane extends Plane {
                 if( this.direction.left ) {
                     this.position.x -= this.speed ;
                     if( this.wall?.getLeft() > this.position.x - this.speed  ) {
-                        gameOver() ;
+                        Game.gameOver() ;
                     }else if( this.wall?.getLeft() > this.position.x + this.getSize().width ) {
                         this.planeStatus = PlaneStatus.END ;
                     }
@@ -366,7 +366,7 @@ class PlaneList {
         const notLifeEnemyPlane = this.enemyPlaneList.filter((plane : EnemyPlane) => ( plane.getPlaneStatus() === PlaneStatus.END )) ;
         this.enemyPlaneList = this.enemyPlaneList.filter((plane : EnemyPlane) => !notLifeEnemyPlane.includes(plane)) ;
 
-        setUserScoreHTML( notLifeEnemyPlane.length ) ;
+        Game.setUserScoreHTML( notLifeEnemyPlane.length ) ;
     }
 }
   

@@ -5,8 +5,7 @@ import './App.css'
 
 import Home from './page/home'
 import History from './page/history'
-import { HOME, HISTORY } from './until/url' ;
-import logo from './logo.svg' ;
+import { HOME, HISTORY } from './util/url' ;
 
 function App() {
   return (
