@@ -1,7 +1,7 @@
 {
-  "name": "shooting_game",
+  "name": "re-shooting-game",
   "version": "1.0.1",
-  "homepage": "https://heesukim0203.github.io/shooting-game",
+  "homepage": "https://heesukim0203.github.io/Re-shooting-game",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
