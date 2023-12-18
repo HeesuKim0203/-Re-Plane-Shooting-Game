@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/Re-shooting-game/static/css/main.26729d5c.css",
-    "main.js": "/Re-shooting-game/static/js/main.f2dafab1.js",
+    "main.js": "/Re-shooting-game/static/js/main.ec803a13.js",
     "static/js/787.afde7f15.chunk.js": "/Re-shooting-game/static/js/787.afde7f15.chunk.js",
     "static/media/background.png": "/Re-shooting-game/static/media/background.b851206f2decb7564b10.png",
     "index.html": "/Re-shooting-game/index.html",
     "main.26729d5c.css.map": "/Re-shooting-game/static/css/main.26729d5c.css.map",
-    "main.f2dafab1.js.map": "/Re-shooting-game/static/js/main.f2dafab1.js.map",
+    "main.ec803a13.js.map": "/Re-shooting-game/static/js/main.ec803a13.js.map",
     "787.afde7f15.chunk.js.map": "/Re-shooting-game/static/js/787.afde7f15.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.26729d5c.css",
-    "static/js/main.f2dafab1.js"
+    "static/js/main.ec803a13.js"
   ]
 }
