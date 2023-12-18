@@ -5,6 +5,7 @@ import useCanvas from './useCanvas'
 import Painter from './class/Painter'
 import Wall from './class/Wall'
 import { PlaneList, UserPlane } from './class/Plane'
+import { USER_LIFE } from '../../util/className'
 
 import userPlaneData from './data/userPlane'
 
@@ -27,7 +28,7 @@ const Canvas = ( props : CanvasProps ) => {
     const planeList = new PlaneList() ;
     planeList.registerUserPlane(userPlane) ;
 
-    const userLife = document.getElementsByClassName('userLife')[0] as HTMLParagraphElement ;
+    const userLife = document.getElementsByClassName(USER_LIFE)[0] as HTMLParagraphElement ;
     userLife.innerText = `Life : ${userPlane.getLife()}` ;
 
     const paint = new Painter(canvas, backgroundSrc) ;
@@ -48,6 +49,7 @@ const Canvas = ( props : CanvasProps ) => {
   return (
     <>
       <canvas 
+        data-testid = "painter-canvas"
         ref = { canvasRef }
         {...props}
       />
