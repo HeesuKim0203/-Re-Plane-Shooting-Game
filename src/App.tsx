@@ -10,7 +10,7 @@ import { HOME, HISTORY } from './util/url' ;
 function App() {
   return (
     <div>
-      <BrowserRouter>
+      <BrowserRouter basename = { process.env.PUBLIC_URL }>
         <Routes>
           <Route path = { HOME } element = { <Home/> } />
           <Route path = { HISTORY } element = { <History/> } />
