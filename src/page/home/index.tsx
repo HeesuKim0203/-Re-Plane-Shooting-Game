@@ -17,6 +17,7 @@ import {
     BACK_BUTTON_TEXT
 } from '../../util/text'
 import { USER_LIFE, USER_SCORE } from '../../util/className'
+import AudioPlayer from '../../AudioPlayer'
 
 type Prop = {
     displayStatus : string
@@ -104,7 +105,7 @@ function GameScreen({ displayStatus, setDisplayStatus } : Prop) {
 
 function Home() {
 
-    const [ displayStatus, setDisplayStatus ] = useState<string>(START_SCREEN) ;
+    const [ displayStatus, setDisplayStatus ] = useState<string>(START_SCREEN)
 
     return (
         <div className = "flex flex-col relative items-center w-screen h-screen bg-[url('/public/background.png')]">
@@ -119,6 +120,9 @@ function Home() {
                     }
                 })()
             }
+            <AudioPlayer 
+                src = {`${ process.env.PUBLIC_URL }/bgm.mp3`}
+            />
         </div>
     ) ;
 }
