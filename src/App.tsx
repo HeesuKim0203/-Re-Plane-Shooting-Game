@@ -1,11 +1,11 @@
 import React from 'react' ;
-import { BrowserRouter, Route, Routes } from 'react-router-dom' ;
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 import './App.css'
 
 import Home from './page/home'
 import History from './page/history'
-import { HOME, HISTORY } from './util/url' ;
+import { HOME, HISTORY } from './util/url' 
 
 function App() {
   return (
